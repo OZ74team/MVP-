@@ -1,0 +1,346 @@
+# 2.0 병합 중 팀장이 바꾼 곳 (세 버전을 그대로 합친 상태 → 2.0)
+# 합친 내용: 섹션 1 = 백종현 v1.2, 섹션 2 = 김승주 v1.4, 섹션 4 MVP 등록·머리말 메뉴·섹션 5 = 노화성 v1.3, JS = v1.4 + v1.3 등록 블록
+
+--- combined/index.html	2026-11-04 11:56:20.318600154 +0900
++++ /home/claude/2.0V/index.html	2026-11-04 12:30:23.318182179 +0900
+@@ -15,7 +15,7 @@
+ </head>
+ <body>
+   <!--
+-    MVP 둥지 예시 페이지 (11/3)
++    MVP 둥지 2.0 (11/4 병합: 섹션 1 백종현 v1.2 · 섹션 2 김승주 v1.4 · 섹션 4 MVP 등록 노화성 v1.3)
+     - 팀장이 먼저 만든 틀입니다. 섹션 담당자는 자기 섹션 블록만 고쳐서 보내 주세요.
+     - CSS는 class로, JS는 id로 요소를 찾습니다.
+       class 이름은 담당자가 바꿔도 되지만, id 이름은 바꾸기 전에 팀장에게 먼저 말해 주세요.
+@@ -109,7 +109,7 @@
+             </div>
+             <!-- 보상 -->
+             <div class="hero-preview-reward">
+-              🪙 피드백 작성 +10P
++              🐣 피드백 작성 모이 +10
+             </div>
+           </div>
+           <!-- 알 아래에 둥지를 겹치기 -->
+@@ -455,7 +455,7 @@
+       </div>
+     </section>
+ 
+-    <!-- ===== 섹션 4. MVP 등록 ===== -->
++    <!-- ===== 섹션 4. MVP 등록 | 담당: 노화성 ===== -->
+     <section id="submit" class="submit">
+       <div class="section-inner">
+         <div class="submit-heading">
+--- combined/style.css	2026-11-04 11:56:20.319039601 +0900
++++ /home/claude/2.0V/style.css	2026-11-04 12:30:23.317679369 +0900
+@@ -1,8 +1,8 @@
+ /* =========================================================
+-   MVP 둥지 style.css (예시 페이지, 11/3)
++   MVP 둥지 style.css (2.0, 11/4 병합)
+    - [공통] 블록은 팀장이 관리합니다. 색과 글꼴은 :root 변수만 바꾸면 전체가 바뀝니다.
+    - 섹션 블록은 담당자가 자기 블록만 고쳐서 보내 주세요.
+-   - 섹션 클래스 이름은 섹션 이름으로 시작합니다: hero-, problem-, how-, cta-
++   - 섹션 클래스 이름은 섹션 이름으로 시작합니다: hero-, problem-, how-, submit-·mvp-, cta-
+      (section-inner, section-title, btn은 모든 섹션이 같이 쓰는 공통 클래스)
+    - 휴대폰 너비(768px 이하) 규칙도 각 섹션 블록 안에 둡니다.
+    ========================================================= */
+@@ -10,14 +10,18 @@
+ 
+ /* ===== [공통] 색·글꼴 변수 | 담당: 김민석(팀장) ===== */
+ :root {
+-  --color-shell: #f1f8f7;      /* 페이지 바탕: 옅은 알껍데기 */
+-  --color-egg: #a8dad3;        /* 알 색 */
+-  --color-twig: #3e2f23;       /* 글자·테두리: 둥지 나뭇가지 */
+-  --color-bark: #6f5e50;       /* 보조 글자 */
+-  --color-yolk: #ffc233;       /* 강조·버튼: 노른자 */
+-  --color-yolk-dark: #eaa900;  /* 버튼에 마우스를 올렸을 때 */
++  /* 2.0: 김승주 님 섹션 2의 꿀빛 둥지 팔레트로 통일 (11/4 팀 결정) */
++  --color-shell: #fcf7ee;      /* 페이지 바탕: 따뜻한 종이색 */
++  --color-dawn: #fbf1dd;       /* 옅은 구역 바탕: 아침 크림 */
++  --color-egg: #ffeccb;        /* 알 색·옅은 강조: 크림 */
++  --color-honey: #ffe1a3;      /* 배지·태그 바탕: 연한 꿀 */
++  --color-twig: #2b211a;       /* 글자·테두리: 에스프레소 */
++  --color-bark: #7a6a5d;       /* 보조 글자 */
++  --color-yolk: #e8a93f;       /* 강조·버튼: 꿀색 */
++  --color-yolk-dark: #d4952b;  /* 버튼에 마우스를 올렸을 때 */
++  --color-yolk-deep: #9a6418;  /* 강조 글자: 진한 꿀색 (흰 바탕에서도 읽히게) */
+   --color-white: #ffffff;
+-  --color-line: #d3e5e1;       /* 옅은 선 */
++  --color-line: #f3dcb3;       /* 옅은 선: 마른 지푸라기 */
+ 
+   --font-title: 'Jua', 'Noto Sans KR', sans-serif;
+   --font-body: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+@@ -208,7 +212,7 @@
+   margin-bottom: 24px;
+ }
+ .hero-title-color{
+-  color: #D87562;
++  color: var(--color-yolk-deep);
+ }
+ .hero-desc {
+   max-width: 32em;
+@@ -225,11 +229,11 @@
+   padding: 18px;
+   margin-bottom: 32px;
+ 
+-  background: #FFFFFF;
+-  border: 1px solid #E8DDD0;
++  background: var(--color-white);
++  border: 1px solid var(--color-line);
+   border-radius: 16px;
+ 
+-  box-shadow: 0 6px 20px rgba(62, 47, 35, 0.05);
++  box-shadow: 0 6px 20px rgba(43, 33, 26, 0.05);
+ }
+ 
+ /* 아이콘 */
+@@ -242,7 +246,7 @@
+   height: 44px;
+   flex-shrink: 0;
+ 
+-  background: #E5F3EB;
++  background: var(--color-egg);
+   border-radius: 12px;
+ 
+   font-size: 23px;
+@@ -257,13 +261,13 @@
+   display: block;
+   margin-bottom: 6px;
+ 
+-  color: #3E2F23;
++  color: var(--color-twig);
+   font-size: 16px;
+   font-weight: 700;
+ }
+ 
+ .hero-note-content p {
+-  color: #6F5E50;
++  color: var(--color-bark);
+   font-size: 14px;
+   line-height: 1.7;
+ }
+@@ -274,7 +278,7 @@
+   gap: 12px;
+ }
+ 
+-/* ===== Hero 오른쪽 알 + 둥지 ===== */
++/* --- 오른쪽 알 + 둥지 --- */
+ 
+ .hero-visual {
+   position: relative;
+@@ -284,7 +288,7 @@
+   padding-bottom: 55px;
+ }
+ 
+-/* 민트색 알 */
++/* 크림색 알 */
+ .hero-preview {
+   position: relative;
+ 
+@@ -299,7 +303,7 @@
+   margin: 0 auto;
+   padding: 15% 8%;
+ 
+-  background-color: beige;
++  background-color: var(--color-egg);
+   border: 2px solid var(--color-twig);
+ 
+   border-radius:
+@@ -329,7 +333,7 @@
+   width: 80%;
+   padding: 14px;
+ 
+-  background: white;
++  background: var(--color-white);
+   border: 2px solid var(--color-twig);
+   border-radius: 16px;
+ }
+@@ -349,7 +353,7 @@
+   height: 48px;
+   flex-shrink: 0;
+ 
+-  background: #e4f2e7;
++  background: var(--color-egg);
+   border-radius: 12px;
+   font-size: 26px;
+ }
+@@ -364,8 +368,8 @@
+ .hero-mvp-badge {
+   display: inline-block;
+   padding: 2px 8px;
+-  background-color: #DDF2E7;
+-  color: #35724E;
++  background-color: var(--color-honey);
++  color: var(--color-twig);
+   border-radius: 6px;
+   font-size: 11px;
+   font-weight: 700;
+@@ -387,7 +391,7 @@
+   width: 100%;
+   padding: 14px;
+ 
+-  background: white;
++  background: var(--color-white);
+   border: 2px solid var(--color-twig);
+   border-radius: 16px;
+ }
+@@ -398,7 +402,7 @@
+   justify-content: space-between;
+ 
+   padding-bottom: 10px;
+-  border-bottom: 1px solid #eeeeee;
++  border-bottom: 1px solid var(--color-line);
+   font-size: 14px;
+ }
+ 
+@@ -422,8 +426,8 @@
+ .hero-feedback-tag {
+   padding: 2px 8px;
+   border-radius: 20px;
+-  background: #d8f1e7;
+-  color: #276346;
++  background: var(--color-honey);
++  color: var(--color-twig);
+   font-size: 11px;
+ }
+ 
+@@ -444,7 +448,7 @@
+ }
+ 
+ .hero-feedback-actions span:first-child {
+-  color: #276346;
++  color: var(--color-yolk-deep);
+   font-weight: 700;
+ }
+ 
+@@ -1550,7 +1554,48 @@
+ }
+ 
+ 
+-/* ===== 섹션 4. 마지막 안내 | 담당: 곽재영 ===== */
++/* ===== 섹션 4. MVP 등록 | 담당: 노화성 ===== */
++.submit { background-color: var(--color-dawn); border-top: 2px solid var(--color-twig); }
++.submit-heading { max-width: 680px; margin-bottom: 36px; }
++.submit-eyebrow { margin-bottom: 10px; color: var(--color-bark); font-size: 12px; font-weight: 700; letter-spacing: .14em; }
++.submit-heading .section-title { margin-bottom: 12px; }
++.submit-desc { color: var(--color-bark); }
++.submit-layout { display: grid; grid-template-columns: 1.35fr .85fr; gap: 28px; align-items: stretch; }
++.submit-form, .submit-preview { padding: 32px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 24px; }
++.submit-field { margin-bottom: 20px; }
++.submit-field label { display: block; margin-bottom: 8px; font-weight: 700; }
++.submit-field label span { color: var(--color-yolk-deep); }
++.submit-field input, .submit-field textarea, .submit-field select { display: block; width: 100%; padding: 13px 14px; border: 2px solid var(--color-line); border-radius: 12px; background: var(--color-white); font: inherit; color: var(--color-twig); }
++.submit-field textarea { resize: vertical; }
++.submit-field input:focus, .submit-field textarea:focus, .submit-field select:focus { outline: 2px solid var(--color-yolk); border-color: var(--color-twig); }
++.submit-hint { margin-top: 6px; color: var(--color-bark); font-size: 12px; }
++.submit-button { width: 100%; }
++.submit-message { min-height: 1.7em; margin-top: 12px; color: var(--color-yolk-deep); font-size: 14px; font-weight: 700; }
++.submit-preview { background: var(--color-egg); }
++.submit-preview-icon { display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 20px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 20px; font-size: 34px; }
++.submit-preview h3 { margin-bottom: 12px; font-size: 25px; }
++.submit-preview p { margin-bottom: 20px; font-size: 14px; }
++.submit-preview ul { display: grid; gap: 10px; }
++.submit-preview li { position: relative; padding-left: 24px; font-size: 14px; }
++.submit-preview li::before { content: "✓"; position: absolute; left: 0; font-weight: 700; }
++.submit-list-wrap { margin-top: 64px; }
++.submit-list-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
++.submit-list-heading h3 { font-size: 26px; }
++.submit-count { padding: 4px 12px; background: var(--color-yolk); border: 1px solid var(--color-twig); border-radius: 999px; font-size: 13px; font-weight: 700; }
++.mvp-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
++.mvp-card { display: flex; flex-direction: column; min-width: 0; padding: 22px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 18px; }
++.mvp-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
++.mvp-category { padding: 4px 10px; background: var(--color-shell); border-radius: 999px; color: var(--color-bark); font-size: 12px; }
++.mvp-date { color: var(--color-bark); font-size: 11px; }
++.mvp-card h4 { margin-bottom: 8px; font-size: 22px; overflow-wrap: anywhere; }
++.mvp-card p { flex: 1; margin-bottom: 18px; color: var(--color-bark); font-size: 14px; overflow-wrap: anywhere; }
++.mvp-card-link { align-self: flex-start; color: var(--color-yolk-deep); font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
++.mvp-empty { grid-column: 1 / -1; padding: 28px; background: var(--color-white); border: 2px dashed var(--color-line); border-radius: 18px; color: var(--color-bark); text-align: center; }
++@media (max-width: 900px) { .submit-layout { grid-template-columns: 1fr; } .mvp-list { grid-template-columns: repeat(2, 1fr); } }
++@media (max-width: 768px) { .submit-form, .submit-preview { padding: 22px; } .mvp-list { grid-template-columns: 1fr; } .submit-list-wrap { margin-top: 44px; } }
++
++
++/* ===== 섹션 5. 마지막 안내 | 담당: 곽재영 ===== */
+ .cta {
+   background-color: var(--color-twig);
+   color: var(--color-white);
+@@ -1596,43 +1641,3 @@
+   font-size: 14px;
+   color: var(--color-bark);
+ }
+-
+-/* ===== 섹션 4. MVP 등록 ===== */
+-.submit { background-color: #e7f1ee; border-top: 2px solid var(--color-twig); }
+-.submit-heading { max-width: 680px; margin-bottom: 36px; }
+-.submit-eyebrow { margin-bottom: 10px; color: var(--color-bark); font-size: 12px; font-weight: 700; letter-spacing: .14em; }
+-.submit-heading .section-title { margin-bottom: 12px; }
+-.submit-desc { color: var(--color-bark); }
+-.submit-layout { display: grid; grid-template-columns: 1.35fr .85fr; gap: 28px; align-items: stretch; }
+-.submit-form, .submit-preview { padding: 32px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 24px; }
+-.submit-field { margin-bottom: 20px; }
+-.submit-field label { display: block; margin-bottom: 8px; font-weight: 700; }
+-.submit-field label span { color: #bd563f; }
+-.submit-field input, .submit-field textarea, .submit-field select { display: block; width: 100%; padding: 13px 14px; border: 2px solid var(--color-line); border-radius: 12px; background: var(--color-white); font: inherit; color: var(--color-twig); }
+-.submit-field textarea { resize: vertical; }
+-.submit-field input:focus, .submit-field textarea:focus, .submit-field select:focus { outline: 2px solid var(--color-egg); border-color: var(--color-twig); }
+-.submit-hint { margin-top: 6px; color: var(--color-bark); font-size: 12px; }
+-.submit-button { width: 100%; }
+-.submit-message { min-height: 1.7em; margin-top: 12px; color: #326b54; font-size: 14px; font-weight: 700; }
+-.submit-preview { background: var(--color-egg); }
+-.submit-preview-icon { display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 20px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 20px; font-size: 34px; }
+-.submit-preview h3 { margin-bottom: 12px; font-size: 25px; }
+-.submit-preview p { margin-bottom: 20px; font-size: 14px; }
+-.submit-preview ul { display: grid; gap: 10px; }
+-.submit-preview li { position: relative; padding-left: 24px; font-size: 14px; }
+-.submit-preview li::before { content: "✓"; position: absolute; left: 0; font-weight: 700; }
+-.submit-list-wrap { margin-top: 64px; }
+-.submit-list-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+-.submit-list-heading h3 { font-size: 26px; }
+-.submit-count { padding: 4px 12px; background: var(--color-yolk); border: 1px solid var(--color-twig); border-radius: 999px; font-size: 13px; font-weight: 700; }
+-.mvp-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+-.mvp-card { display: flex; flex-direction: column; min-width: 0; padding: 22px; background: var(--color-white); border: 2px solid var(--color-twig); border-radius: 18px; }
+-.mvp-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+-.mvp-category { padding: 4px 10px; background: var(--color-shell); border-radius: 999px; color: var(--color-bark); font-size: 12px; }
+-.mvp-date { color: var(--color-bark); font-size: 11px; }
+-.mvp-card h4 { margin-bottom: 8px; font-size: 22px; overflow-wrap: anywhere; }
+-.mvp-card p { flex: 1; margin-bottom: 18px; color: var(--color-bark); font-size: 14px; overflow-wrap: anywhere; }
+-.mvp-card-link { align-self: flex-start; color: #315f54; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+-.mvp-empty { grid-column: 1 / -1; padding: 28px; background: var(--color-white); border: 2px dashed var(--color-line); border-radius: 18px; color: var(--color-bark); text-align: center; }
+-@media (max-width: 900px) { .submit-layout { grid-template-columns: 1fr; } .mvp-list { grid-template-columns: repeat(2, 1fr); } }
+-@media (max-width: 768px) { .submit-form, .submit-preview { padding: 22px; } .mvp-list { grid-template-columns: 1fr; } .submit-list-wrap { margin-top: 44px; } }
+--- combined/script.js	2026-11-04 11:56:20.319144010 +0900
++++ /home/claude/2.0V/script.js	2026-11-04 12:30:23.318338229 +0900
+@@ -1,15 +1,19 @@
+ /* =========================================================
+-   MVP 둥지 script.js (예시 페이지, 11/3)
+-   섹션 3 체험용 예시: 피드백을 남기면 모이가 쌓이고 등급이 오른다
+-   - 담당: 노화성 (섹션 3)
+-   - HTML에서 JS가 쓰는 요소는 id로 찾습니다. (CSS는 class를 씁니다)
++   MVP 둥지 script.js (2.0, 11/4 병합)
++   블록 세 개로 나뉩니다. 담당자는 자기 블록만 고쳐 주세요.
++   1) 섹션 3 체험용 예시 | 담당: 노화성
++      피드백을 남기면 모이가 쌓이고 등급이 오른다. 저장하지 않아서 새로고침하면 처음(알, 모이 0)으로.
++   2) 섹션 2 문제·해결 | 담당: 김승주
++      고민-해결 연결하기, 아침→하늘 배경, 카드 기울이기
++   3) 섹션 4 MVP 등록 | 담당: 노화성
++      등록한 MVP를 이 브라우저의 localStorage에 저장한다 (다른 방문자에게는 안 보임)
++   - HTML에서 JS가 쓰는 요소는 id로 찾습니다(섹션 2는 data- 속성). CSS는 class를 씁니다.
+      그래서 디자인 담당이 class 이름을 바꿔도 JS는 깨지지 않습니다.
+-   - 체험용이라 저장하지 않습니다. 새로고침하면 처음(알, 모이 0)으로 돌아갑니다.
+-   - [김승주 추가] 섹션 2 기능(고민-해결 연결하기, 아침→하늘 배경, 카드 기울이기)은 맨 아래
+-     "섹션 2 | 담당: 김승주" 블록에 따로 있습니다. 섹션 3 코드는 건드리지 않았습니다.
+    ========================================================= */
+ 
+ 
++/* ===== 섹션 3. 사용 방법·예시 | 담당: 노화성 ===== */
++
+ // 1. 화면에서 쓸 요소를 id로 찾아 둔다
+ const feedbackInput = document.querySelector('#feedbackInput');
+ const feedbackButton = document.querySelector('#feedbackButton');
+@@ -225,7 +229,7 @@
+   });
+ }
+ 
+-/* ===== MVP 등록 기능 =====
++/* ===== 섹션 4. MVP 등록 | 담당: 노화성 =====
+    현재 브라우저의 localStorage에 저장합니다.
+    모든 사용자에게 공유하려면 서버/API와 데이터베이스 연동이 필요합니다. */
+ const mvpForm = document.querySelector('#mvpForm');

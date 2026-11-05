@@ -134,7 +134,7 @@ render();
 // 2-1. 섹션 2 영역과 기능을 붙일 요소를 찾아 둔다
 const problemSection = document.querySelector('#problem');
 const problemLinkButtons = problemSection.querySelectorAll('[data-problem-link]');
-const problemTiltCards = problemSection.querySelectorAll('[data-problem-tilt]');
+const problemTiltCards = problemSection.querySelectorAll('[data-problem-tilt]'); // 기울기는 덤 카드(둘러보며 배우기)에만
 
 
 // 2-2. 고민 말풍선 → 해결 카드 연결하기
@@ -146,7 +146,7 @@ const PROBLEM_LINK_TIME = 1800; // 빛나는 시간(ms)
 
 problemLinkButtons.forEach(function (button) {
   const pair = button.closest('[data-problem-pair]');
-  const card = pair.querySelector('[data-problem-tilt]');
+  const card = pair.querySelector('[data-problem-card]'); // 같은 줄의 해결 카드
   let timer = null;
 
   button.addEventListener('click', function () {
@@ -228,6 +228,61 @@ if (problemCanTilt) {
     });
   });
 }
+
+
+// 2-5. 깃털 반응 체험: [도움 됐어요] 누르면 숫자 +1, 깃털이 팔랑팔랑 떨어짐
+//      - 다시 누르면 취소(숫자 -1). 저장하지 않아서 새로고침하면 처음 숫자로 돌아감
+//      - 깃털은 <template id="problemFeather">를 복사해서 버튼 위치에 붙이고, 애니메이션이 끝나면 지운다
+//      - '동작 줄이기' 설정이면 깃털 없이 숫자만 바뀜
+const problemHelpArea = problemSection.querySelector('[data-problem-help-area]');
+const problemHelpButton = problemSection.querySelector('[data-problem-help]');
+const problemHelpCount = problemSection.querySelector('[data-problem-help-count]');
+const problemFeatherTemplate = document.querySelector('#problemFeather');
+const PROBLEM_FEATHER_COUNT = 6; // 한 번에 떨어지는 깃털 수
+
+function dropProblemFeathers() {
+  // 버튼 가운데에서 깃털이 시작되도록 위치 계산 (problemHelpArea 기준)
+  const startX = problemHelpButton.offsetLeft + problemHelpButton.offsetWidth / 2;
+  const startY = problemHelpButton.offsetTop;
+
+  for (let i = 0; i < PROBLEM_FEATHER_COUNT; i++) {
+    const feather = problemFeatherTemplate.content.firstElementChild.cloneNode(true);
+    const random = function (min, max) { return min + Math.random() * (max - min); };
+
+    feather.style.left = startX + 'px';
+    feather.style.top = startY + 'px';
+    feather.style.setProperty('--problem-dx', random(-70, 70) + 'px');     // 옆으로 흔들리는 거리
+    feather.style.setProperty('--problem-fall', random(60, 120) + 'px');   // 떨어지는 깊이
+    feather.style.setProperty('--problem-rot', random(-200, 200) + 'deg'); // 도는 각도
+    feather.style.animationDelay = (i * 70) + 'ms';                        // 하나씩 차례로
+
+    // 애니메이션이 끝나면 화면에서 지운다
+    feather.addEventListener('animationend', function () {
+      feather.remove();
+    });
+    problemHelpArea.appendChild(feather);
+  }
+}
+
+problemHelpButton.addEventListener('click', function () {
+  const isPressed = problemHelpButton.getAttribute('aria-pressed') === 'true';
+  const count = Number(problemHelpCount.textContent);
+
+  // 눌린 상태를 반대로 바꾸고 숫자를 +1 / -1
+  problemHelpButton.setAttribute('aria-pressed', String(!isPressed));
+  problemHelpCount.textContent = isPressed ? count - 1 : count + 1;
+
+  // 숫자가 바뀔 때 톡 튀는 효과 (떼고 → 다시 붙여야 매번 처음부터 재생됨)
+  problemHelpCount.classList.remove('is-bump');
+  void problemHelpCount.offsetWidth;
+  problemHelpCount.classList.add('is-bump');
+
+  // 새로 눌렀을 때만 깃털 (취소할 때는 안 떨어짐)
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!isPressed && !reduceMotion) {
+    dropProblemFeathers();
+  }
+});
 
 /* ===== 섹션 4. MVP 등록 | 담당: 노화성 =====
    현재 브라우저의 localStorage에 저장합니다.

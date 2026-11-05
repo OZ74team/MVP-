@@ -496,7 +496,7 @@ button:focus-visible {
 }
 
 
-/* 태블릿 및 작은 화면 */
+/* 태블릿 및 작은 화면 입니다. */
 @media (max-width: 1024px) {
   .hero-inner {
     grid-template-columns: 1fr;

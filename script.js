@@ -1,6 +1,8 @@
 /* =========================================================
    MVP 둥지 script.js (2.0, 11/4 병합)
-   블록 세 개로 나뉩니다. 담당자는 자기 블록만 고쳐 주세요.
+   블록 네 개로 나뉩니다. 담당자는 자기 블록만 고쳐 주세요.
+   0) 섹션 1 첫 화면 | 담당: 백종현 (맨 아래)
+      알이 깨어나는 무대: 피드백 도착 → 모이 → 금 → 아기새 → 어른새, 마우스 기울기
    1) 섹션 3 체험용 예시 | 담당: 노화성
       피드백을 남기면 모이가 쌓이고 등급이 오른다. 저장하지 않아서 새로고침하면 처음(알, 모이 0)으로.
    2) 섹션 2 문제·해결 | 담당: 김승주
@@ -354,3 +356,334 @@ if (mvpForm) {
   });
 }
 renderMvps();
+
+
+/* 백종현 파트 - 첫 화면 */
+
+
+
+(function () {
+  const heroSection = document.querySelector('#hero');
+  if (!heroSection) return;
+
+  const stage = heroSection.querySelector('[data-hero-stage]');
+  const egg = heroSection.querySelector('[data-hero-egg]');
+  const poke = heroSection.querySelector('[data-hero-poke]');
+  const card = heroSection.querySelector('[data-hero-card]');
+  const avatarEl = heroSection.querySelector('[data-hero-avatar]');
+  const nameEl = heroSection.querySelector('[data-hero-name]');
+  const textEl = heroSection.querySelector('[data-hero-text]');
+  const likesEl = heroSection.querySelector('[data-hero-likes]');
+  const totalEl = heroSection.querySelector('[data-hero-total]');
+  const pointsEl = heroSection.querySelector('[data-hero-points]');
+  const fillEl = heroSection.querySelector('[data-hero-fill]');
+  const stageNameEl = heroSection.querySelector('[data-hero-stage-name]');
+  const rewardEl = heroSection.querySelector('[data-hero-reward]');
+  if (!stage || !egg || !card) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // 1. 예시 피드백 (실제 사용자 글이 아니라 화면을 위한 예시 문구)
+  //    첫 번째 항목은 HTML에 적힌 내용과 같아야 합니다.
+  const heroFeedbacks = [
+    {
+      avatar: '👩🏻',
+      name: '아이디어러버',
+      text: '첫 화면에서 물 주는 날짜를 바로 확인할 수 있으면 더 편할 것 같아요!',
+      likes: 8,
+    },
+    {
+      avatar: '🧑🏻‍💻',
+      name: '새벽코더',
+      text: '알림 시간을 직접 고를 수 있으면 자취생한테 딱이에요!',
+      likes: 11,
+    },
+    {
+      avatar: '🧑🏽',
+      name: '퇴근후창업',
+      text: '이름이 한눈에 들어와서 좋아요. 응원해요! 🔥',
+      likes: 6,
+    },
+    {
+      avatar: '👧🏼',
+      name: '첫눈',
+      text: '식물 사진을 찍으면 상태를 알려 주는 기능도 있으면 좋겠어요.',
+      likes: 14,
+    },
+    {
+      avatar: '🧔🏻',
+      name: '모이콜렉터',
+      text: '랜딩페이지 첫 문장이 정말 깔끔해요. 바로 이해됐어요.',
+      likes: 9,
+    },
+    {
+      avatar: '🧑🏻‍🎤',
+      name: '둥지이웃',
+      text: '버튼 색이 잘 보여서 어디를 눌러야 할지 바로 알겠어요.',
+      likes: 12,
+    },
+    {
+      avatar: '👩🏽‍🌾',
+      name: '초록손',
+      text: '식물마다 물 주는 주기를 추천해 주면 정말 유용할 것 같아요!',
+      likes: 17,
+    },
+  ];
+
+  const HERO_POINT = 10;         // 피드백 한 번에 받는 모이
+  const HERO_STAGE_AT = [0, 30, 60];   // 알 / 아기새 / 어른새가 되는 모이
+  const HERO_STAGE_NAMES = ['🥚 알', '🐣 아기새', '🐦 어른새'];
+  const HERO_MAX = HERO_STAGE_AT[HERO_STAGE_AT.length - 1];
+  const HERO_AUTO_MS = 3200;     // 저절로 다음 피드백이 오는 간격
+  const HERO_HOLD_MS = 5200;     // 날아간 뒤 새 알로 돌아가기까지
+
+  let points = 0;
+  let feedbackIndex = 0;
+  let total = 12;
+  let timer = null;
+  let heroVisible = true;
+
+
+  // 2. 숫자를 부드럽게 올리기 (움직임을 줄이면 바로 바꿈)
+  function countTo(el, to) {
+    if (!el) return;
+    const from = Number(el.textContent) || 0;
+    if (reduceMotion.matches || from === to) {
+      el.textContent = to;
+      return;
+    }
+    const start = performance.now();
+    const duration = 450;
+    function step(now) {
+      const t = Math.min((now - start) / duration, 1);
+      el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // class를 떼고 → 화면에 반영 → 다시 붙여서 애니메이션을 처음부터 다시 재생
+  function replay(el, className) {
+    el.classList.remove(className);
+    void el.offsetWidth;
+    el.classList.add(className);
+  }
+
+
+  // 3. 모이(씨앗)·깃털이 알 위쪽에서 튀어 오르는 효과
+  function burst(kind, count, power) {
+    if (reduceMotion.matches) return;
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const originX = stage.offsetWidth / 2;
+    const originY = stage.offsetHeight * 0.3;
+
+    for (let i = 0; i < count; i++) {
+      const isFeather = kind === 'feather' || (kind === 'mix' && i % 2 === 0);
+      const size = (isFeather ? 20 : 15) + Math.random() * 12;
+      const svg = document.createElementNS(SVG_NS, 'svg');
+      const use = document.createElementNS(SVG_NS, 'use');
+      use.setAttribute('href', isFeather ? '#heroFeather' : '#heroSeed');
+      svg.setAttribute('viewBox', isFeather ? '0 0 24 24' : '0 0 16 16');
+      svg.setAttribute('class', 'hero-burst');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.style.left = originX + 'px';
+      svg.style.top = originY + 'px';
+      svg.style.width = size + 'px';
+      svg.style.height = size + 'px';
+
+      // 깃털은 흰색·크림색, 모이는 진한 꿀색·꿀색을 섞어서
+      if (isFeather) {
+        svg.style.color = (i % 4 === 0) ? '#fff4cf' : '#ffffff';
+      } else {
+        svg.style.color = (i % 3 === 0) ? '#d4952b' : '#e8a93f';
+      }
+      svg.appendChild(use);
+      stage.appendChild(svg);
+
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.5;  // 위쪽 부채꼴
+      const distance = power * (0.55 + Math.random() * 0.75);
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+      const spin = (Math.random() - 0.5) * 540;
+      const base = 'translate(-50%, -50%) ';
+
+      // 시작(작게) → 튀어 오른 곳(제 크기) → 아래로 떨어지며 사라짐
+      const startFrame = {
+        transform: base + 'translate(0px, 0px) rotate(0deg) scale(0.3)',
+        opacity: 1,
+      };
+      const peakFrame = {
+        transform: base + 'translate(' + dx + 'px, ' + dy + 'px) rotate(' + (spin * 0.5) + 'deg) scale(1)',
+        opacity: 1,
+        offset: 0.42,
+      };
+      const endFrame = {
+        transform: base + 'translate(' + (dx * 1.2) + 'px, ' + (dy + 170) + 'px) rotate(' + spin + 'deg) scale(0.9)',
+        opacity: 0,
+      };
+
+      const animation = svg.animate([startFrame, peakFrame, endFrame], {
+        duration: 1200 + Math.random() * 600,
+        easing: 'cubic-bezier(0.2, 0.7, 0.3, 1)',
+      });
+      animation.onfinish = function () { svg.remove(); };
+    }
+  }
+
+
+  // 4. 화면 그리기
+  function stageIndex() {
+    let index = 0;
+    for (let i = 0; i < HERO_STAGE_AT.length; i++) {
+      if (points >= HERO_STAGE_AT[i]) index = i;
+    }
+    return index;
+  }
+
+  function showFeedback(index) {
+    const feedback = heroFeedbacks[index];
+    avatarEl.textContent = feedback.avatar;
+    nameEl.textContent = feedback.name;
+    textEl.textContent = feedback.text;
+    likesEl.textContent = '👍 도움돼요 ' + feedback.likes;
+  }
+
+  function renderMeter() {
+    countTo(pointsEl, points);
+    fillEl.style.width = (points / HERO_MAX * 100) + '%';
+    stageNameEl.textContent = HERO_STAGE_NAMES[stageIndex()];
+  }
+
+
+  // 5. 다음 피드백이 도착 (알이 흔들리고 → 모이 +10 → 단계가 오르면 효과)
+  function nextFeedback() {
+    // 날아간 뒤에 다시 누르면 새 알로 돌아감
+    if (points >= HERO_MAX) {
+      resetEgg();
+      return;
+    }
+
+    const beforeStage = stageIndex();
+    points += HERO_POINT;
+    total += 1;
+    feedbackIndex = (feedbackIndex + 1) % heroFeedbacks.length;
+    const afterStage = stageIndex();
+
+    showFeedback(feedbackIndex);
+    replay(card, 'is-new');
+    replay(egg, 'is-shake');
+    replay(rewardEl, 'is-pop');
+    countTo(totalEl, total);
+    renderMeter();
+    stage.dataset.stage = String(afterStage);
+
+    if (afterStage > beforeStage) {
+      // 아기새가 고개를 내밀 때는 모이, 어른새가 날아갈 때는 깃털이 크게 흩날림
+      if (afterStage === 1) burst('seed', 14, 170);
+      else burst('mix', 24, 250);
+    } else {
+      burst('seed', 6, 120);
+    }
+  }
+
+  function resetEgg() {
+    points = 0;
+    total = 12;
+    feedbackIndex = 0;
+    showFeedback(0);
+    replay(card, 'is-new');
+    countTo(totalEl, total);
+    stage.dataset.stage = '0';
+    renderMeter();
+  }
+
+
+  // 6. 저절로 진행: 화면에 보이고, 탭이 열려 있고, 동작 줄이기가 아닐 때만
+  function canAutoPlay() {
+    return heroVisible && !document.hidden && !reduceMotion.matches;
+  }
+
+  function schedule(delay) {
+    clearTimeout(timer);
+    if (!canAutoPlay()) return;
+    timer = setTimeout(function () {
+      nextFeedback();
+      schedule(points >= HERO_MAX ? HERO_HOLD_MS : HERO_AUTO_MS);
+    }, delay);
+  }
+
+  // 사람이 직접 눌렀을 때: 바로 다음 피드백 + 자동 진행 타이머를 새로 시작
+  function pokeEgg() {
+    nextFeedback();
+    schedule(points >= HERO_MAX ? HERO_HOLD_MS : HERO_AUTO_MS + 1500);
+  }
+
+  egg.addEventListener('click', pokeEgg);
+  if (poke) poke.addEventListener('click', pokeEgg);
+
+  document.addEventListener('visibilitychange', function () { schedule(1200); });
+  reduceMotion.addEventListener('change', function () { schedule(1200); });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      heroVisible = entries[0].isIntersecting;
+      schedule(1200);
+    }, { threshold: 0.2 }).observe(heroSection);
+  }
+
+  renderMeter();
+  schedule(2600);   // 처음 연출(해 뜨기·제목 올라오기)이 끝난 뒤 시작
+
+
+  // 7. 마우스를 따라 알 무대가 기울고 해가 살짝 반대로 움직임 (마우스가 있는 기기에서만)
+  const heroCanTilt =
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion.matches;
+
+  if (heroCanTilt) {
+    let mouseX = 0;
+    let mouseY = 0;
+    let tiltTicking = false;
+
+    function applyTilt() {
+      heroSection.style.setProperty('--hero-mx', mouseX.toFixed(3));
+      heroSection.style.setProperty('--hero-my', mouseY.toFixed(3));
+      tiltTicking = false;
+    }
+
+    heroSection.addEventListener('pointermove', function (event) {
+      const rect = heroSection.getBoundingClientRect();
+      mouseX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;   // -1 ~ 1
+      mouseY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+      if (!tiltTicking) {
+        tiltTicking = true;
+        requestAnimationFrame(applyTilt);
+      }
+    });
+
+    heroSection.addEventListener('pointerleave', function () {
+      mouseX = 0;
+      mouseY = 0;
+      applyTilt();
+    });
+  }
+
+
+  // 8. 스크롤로 내려갈수록 글은 살짝 흐려지고 알은 위로 떠오름 (섹션 2의 "날아오르기"로 이어짐)
+  if (!reduceMotion.matches) {
+    let scrollTicking = false;
+
+    function updateHeroScroll() {
+      const progress = Math.min(Math.max(window.scrollY / heroSection.offsetHeight, 0), 1);
+      heroSection.style.setProperty('--hero-scroll', progress.toFixed(3));
+      scrollTicking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(updateHeroScroll);
+      }
+    }, { passive: true });
+    updateHeroScroll();
+  }
+})();

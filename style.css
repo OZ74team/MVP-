@@ -193,149 +193,463 @@ button:focus-visible {
 }
 
 
-/* ===== 섹션 1. 첫 화면 | 담당: 백종현 ===== */
+/* ===== 섹션 1. 첫 화면 | 담당: 백종현 (v2.1 리뉴얼) =====
+   - 콘셉트: "알이 깨어나는 순간" (알 → 금 → 아기새 → 날아오르는 어른새)*/
 
 .hero {
-  padding-top: 88px;
-  padding-bottom: 104px;
+  --hero-mx: 0;        /* 마우스 가로 위치 -1(왼쪽 끝) ~ 1(오른쪽 끝). JS가 바꿈 */
+  --hero-my: 0;        /* 마우스 세로 위치 -1 ~ 1. JS가 바꿈 */
+  --hero-scroll: 0;    /* 첫 화면을 지나간 정도 0~1. JS가 바꿈 */
+  --hero-ease: cubic-bezier(0.22, 1, 0.36, 1);   /* 끝에서 살짝 감속 */
+  --hero-pop: cubic-bezier(0.34, 1.56, 0.64, 1); /* 살짝 튕기는 움직임 */
+
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
+
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100svh - var(--header-height));
+  padding-top: 48px;
+  padding-bottom: 84px;
+
+  /* 아침 하늘: 위는 따뜻한 햇살, 아래로 갈수록 페이지 바탕색에 녹아듦 */
+  background: linear-gradient(180deg, #ffefc7 0%, #fdf2dc 50%, var(--color-shell) 100%);
 }
 
 .hero-inner {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 56px;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
   align-items: center;
+  width: 100%;
 }
 
-.hero-title {
-  font-size: 56px;
-  margin-bottom: 24px;
-}
-.hero-title-color{
-  color: rgb(50, 169, 46);
-}
-.hero-desc {
-  max-width: 32em;
-  font-size: 18px;
-  margin-bottom: 20px;
+/* ----- 배경 ----- */
+.hero-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.hero-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-
-  max-width: 30em;
-  padding: 18px;
-  margin-bottom: 32px;
-
-  background: var(--color-white);
-  border: 1px solid var(--color-line);
-  border-radius: 16px;
-
-  box-shadow: 0 6px 20px rgba(43, 33, 26, 0.05);
+.hero-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
-/* 아이콘 */
-.hero-note-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-
-  background: var(--color-egg);
-  border-radius: 12px;
-
-  font-size: 23px;
+/* 해: 알 뒤에서 떠오름 */
+.hero-sun {
+  position: absolute;
+  left: 74%;
+  top: 44%;
+  width: 700px;
+  height: 700px;
+  margin: -350px 0 0 -350px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #fffdf2 0%, #fff1b8 36%, rgba(255, 226, 140, 0.6) 54%, rgba(255, 226, 140, 0) 72%);
+  translate: calc(var(--hero-mx) * -18px) calc(var(--hero-my) * -14px);
 }
 
-/* 하단에 작은 설명 카드 */
-.hero-note-content {
-  min-width: 0;
+/* 햇살: 해 둘레에서 천천히 돎 */
+.hero-rays {
+  position: absolute;
+  left: 74%;
+  top: 44%;
+  width: 1500px;
+  height: 1500px;
+  margin: -750px 0 0 -750px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg,
+    rgba(255, 201, 90, 0.3) 0deg 5deg, rgba(255, 201, 90, 0) 5deg 18deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.55) 28%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.55) 28%, transparent 62%);
+  translate: calc(var(--hero-mx) * -10px) calc(var(--hero-my) * -8px);
 }
 
-.hero-note-content strong {
+/* 떠오르는 모이·깃털 */
+.hero-seed {
+  position: absolute;
+  left: var(--x);
+  bottom: -50px;
+  width: var(--s);
+  height: var(--s);
+  color: var(--c);
+  opacity: 0;
+}
+
+.hero-seed svg {
   display: block;
-  margin-bottom: 6px;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: currentColor;
+}
 
-  color: var(--color-twig);
-  font-size: 16px;
+/* ----- 글 영역 ----- */
+.hero-text {
+  translate: 0 calc(var(--hero-scroll) * -34px);
+  opacity: calc(1 - var(--hero-scroll) * 0.7);
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 7px 16px 7px 12px;
+  border: 1.5px solid var(--color-twig);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
   font-weight: 700;
 }
 
-.hero-note-content p {
+.hero-eyebrow-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-yolk);
+  box-shadow: 0 0 0 0 rgba(232, 169, 63, 0.7);
+}
+
+.hero-title {
+  margin-bottom: 28px;
+  font-size: clamp(40px, 5.4vw, 68px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+}
+
+/* 줄마다 가려 두었다가 올라오게 하려고 줄을 상자로 감쌈 */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  padding: 0.04em 0.2em 0.1em;
+  margin: -0.04em -0.2em -0.1em;
+}
+
+.hero-line-in {
+  display: inline-block;
+}
+
+/* "내 아이디어": 형광펜을 그은 글자 */
+.hero-title-color {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+}
+
+.hero-title-color::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -0.1em;
+  right: -0.1em;
+  bottom: 0.06em;
+  height: 0.46em;
+  border-radius: 0.2em 0.5em 0.3em 0.45em;
+  background: #ffc94d;
+  transform-origin: left center;
+  transform: rotate(-1deg);
+}
+
+.hero-desc {
+  max-width: 31em;
+  margin-bottom: 22px;
+}
+
+.hero-desc strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+.hero-desc small {
+  display: block;
+  color: var(--color-bark);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* MVP 설명: 눌러서 펼치는 작은 카드 */
+.hero-note {
+  max-width: 30em;
+  margin-bottom: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(43, 33, 26, 0.05);
+  transition: box-shadow 0.3s;
+}
+
+.hero-note[open] {
+  box-shadow: 0 14px 30px -10px rgba(43, 33, 26, 0.18);
+}
+
+.hero-note summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 10px 10px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hero-note summary::-webkit-details-marker {
+  display: none;
+}
+
+.hero-note summary:focus-visible {
+  outline: 3px solid var(--color-twig);
+  outline-offset: -3px;
+  border-radius: 16px;
+}
+
+.hero-note-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--color-egg);
+  border-radius: 11px;
+  font-size: 19px;
+}
+
+/* + 모양 (열리면 ×로 돌아감) */
+.hero-note-plus {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  transition: transform 0.35s var(--hero-pop);
+}
+
+.hero-note-plus::before,
+.hero-note-plus::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 2.5px;
+  margin: -1.25px 0 0 -7px;
+  border-radius: 2px;
+  background: var(--color-twig);
+}
+
+.hero-note-plus::after {
+  transform: rotate(90deg);
+}
+
+.hero-note[open] .hero-note-plus {
+  transform: rotate(135deg);
+}
+
+.hero-note p {
+  padding: 0 18px 16px 58px;
   color: var(--color-bark);
   font-size: 14px;
   line-height: 1.7;
 }
 
+/* 버튼: 두툼한 그림자가 눌리는 느낌 */
+.hero .btn {
+  padding: 15px 30px;
+  font-size: 17px;
+  transition: background-color 0.2s, transform 0.2s var(--hero-ease), box-shadow 0.2s;
+}
+
 .hero-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
 
-/* --- 오른쪽 알 + 둥지 --- */
+.hero-btn-main {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 0 var(--color-twig);
+}
 
+.hero-btn-main:hover {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 var(--color-twig);
+}
+
+.hero-btn-main:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 var(--color-twig);
+}
+
+.hero-btn-main::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -70%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-20deg);
+}
+
+.hero-btn-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform 0.25s var(--hero-ease);
+}
+
+.hero-btn-main:hover .hero-btn-arrow {
+  transform: translateX(5px);
+}
+
+.hero .btn-ghost {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.hero .btn-ghost:hover {
+  background-color: var(--color-white);
+}
+
+.hero-trust {
+  margin-top: 18px;
+  color: var(--color-bark);
+  font-size: 13px;
+}
+
+.hero-trust::before {
+  content: '✓';
+  margin-right: 6px;
+  color: var(--color-yolk-deep);
+  font-weight: 700;
+}
+
+/* ----- 오른쪽: 알이 깨어나는 무대 ----- */
 .hero-visual {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 420px;
   margin: 0 auto;
-  padding-bottom: 55px;
+  padding-top: 56px;   /* 아기새가 고개를 내밀 자리 */
+  translate: 0 calc(var(--hero-scroll) * -70px);
+}
+
+.hero-stage {
+  position: relative;
+  padding-bottom: 76px;
+  /* 마우스를 따라 살짝 기울어짐 (JS가 --hero-mx/my를 넘겨 줌) */
+  transform: perspective(1000px) rotateY(calc(var(--hero-mx) * 7deg)) rotateX(calc(var(--hero-my) * -5deg));
+  transition: transform 0.25s ease-out;
 }
 
 /* 크림색 알 */
 .hero-preview {
   position: relative;
+  z-index: 1;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 
   width: 88%;
-  aspect-ratio: 4 / 5.2;
+  aspect-ratio: 4 / 5.1;
   margin: 0 auto;
-  padding: 15% 8%;
+  padding: 17% 8% 15%;
 
-  background-color: var(--color-egg);
+  /* 알 모양 + 왼쪽 위에서 빛이 비치는 입체감 + 얼룩무늬 */
+  background:
+    radial-gradient(circle at 74% 7%, rgba(212, 149, 43, 0.3) 0 5px, transparent 6px),
+    radial-gradient(circle at 24% 11%, rgba(212, 149, 43, 0.26) 0 4px, transparent 5px),
+    radial-gradient(circle at 56% 5%, rgba(212, 149, 43, 0.22) 0 3px, transparent 4px),
+    radial-gradient(circle at 32% 24%, #fffaf0 0%, var(--color-egg) 52%, #ffd896 100%);
   border: 2px solid var(--color-twig);
-
-  border-radius:
-    50% 50% 46% 46% /
-    60% 60% 40% 40%;
-
-  z-index: 1;
+  border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+  box-shadow:
+    inset -16px -22px 34px rgba(232, 169, 63, 0.28),
+    0 34px 44px -26px rgba(43, 33, 26, 0.4);
+  cursor: pointer;
+  transform-origin: 50% 100%;
 }
 
-/* 둥지 이미지 */
-.hero-nest {
+/* 알 표면에 비친 빛 */
+.hero-shine {
   position: absolute;
-  bottom: -25px;
-  left: 50%;
-
-  width: 100%;
-  height: auto;
-
-  transform: translateX(-50%);
-
-  /* z-index: 2; */
+  top: 7%;
+  left: 15%;
+  width: 11%;
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  filter: blur(2px);
+  transform: rotate(24deg);
   pointer-events: none;
+}
+
+/* 알에 가는 금 */
+.hero-crack {
+  position: absolute;
+  z-index: 0;
+  left: 24%;
+  top: 10%;
+  width: 52%;
+  height: 8%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hero-crack-line {
+  fill: none;
+  stroke: var(--color-twig);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.7s ease-out;
+}
+
+.hero-crack-line--2 {
+  transition-delay: 0.35s;
+}
+
+.hero-stage[data-stage="1"] .hero-crack-line--1,
+.hero-stage[data-stage="2"] .hero-crack-line--1,
+.hero-stage[data-stage="2"] .hero-crack-line--2 {
+  stroke-dashoffset: 0;
+}
+
+/* 카드들은 금보다 위에 */
+.hero-preview-card,
+.hero-feedback-card,
+.hero-preview-reward,
+.hero-meter {
+  position: relative;
+  z-index: 1;
 }
 
 /* MVP 소개 카드 */
 .hero-preview-card {
   width: 80%;
-  padding: 14px;
+  padding: 12px 14px;
 
   background: var(--color-white);
   border: 2px solid var(--color-twig);
   border-radius: 16px;
+  box-shadow: 0 4px 0 rgba(43, 33, 26, 0.12);
 }
 
 .hero-mvp-header {
@@ -349,13 +663,13 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
 
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   flex-shrink: 0;
 
   background: var(--color-egg);
   border-radius: 12px;
-  font-size: 26px;
+  font-size: 25px;
 }
 
 .hero-mvp-title-row {
@@ -378,11 +692,14 @@ button:focus-visible {
 
 .hero-preview-name {
   font-family: var(--font-title);
-  font-size: 20px;
+  font-size: 19px;
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
 .hero-preview-desc {
   font-size: 13px;
+  line-height: 1.4;
   color: var(--color-bark);
 }
 
@@ -394,6 +711,7 @@ button:focus-visible {
   background: var(--color-white);
   border: 2px solid var(--color-twig);
   border-radius: 16px;
+  box-shadow: 0 4px 0 rgba(43, 33, 26, 0.12);
 }
 
 .hero-feedback-heading {
@@ -411,6 +729,10 @@ button:focus-visible {
   font-size: 12px;
 }
 
+.hero-feedback-heading b {
+  color: var(--color-yolk-deep);
+}
+
 .hero-feedback-user {
   display: flex;
   align-items: center;
@@ -421,6 +743,7 @@ button:focus-visible {
 
 .hero-avatar {
   font-size: 24px;
+  line-height: 1;
 }
 
 .hero-feedback-tag {
@@ -432,6 +755,7 @@ button:focus-visible {
 }
 
 .hero-feedback-content {
+  min-height: 3.2em;      /* 문구 길이가 바뀌어도 카드 높이가 흔들리지 않게 (2줄) */
   margin-top: 10px;
   font-size: 14px;
   line-height: 1.6;
@@ -442,7 +766,7 @@ button:focus-visible {
   justify-content: space-between;
   gap: 8px;
 
-  margin-top: 12px;
+  margin-top: 8px;
   font-size: 12px;
   color: var(--color-bark);
 }
@@ -456,51 +780,548 @@ button:focus-visible {
 .hero-preview-reward {
   align-self: center;
 
-  padding: 9px 18px;
+  padding: 8px 18px;
   background: var(--color-yolk);
 
   border: 2px solid var(--color-twig);
   border-radius: 999px;
+  box-shadow: 0 3px 0 var(--color-twig);
 
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
 
+/* 모이 막대: 알 → 아기새 → 어른새 */
+.hero-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 86%;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 
-/* ===== Hero 전용 순차 등장 애니메이션 ===== */
+.hero-meter-stage {
+  min-width: 4.6em;
+}
 
-@keyframes heroCardSlideUp {
+.hero-meter-bar {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  overflow: hidden;
+  background: var(--color-white);
+  border: 2px solid var(--color-twig);
+  border-radius: 999px;
+}
+
+/* 막대 중간(30모이)과 끝(60모이)의 단계 표시 */
+.hero-meter-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: rgba(43, 33, 26, 0.25);
+}
+
+.hero-meter-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd166, var(--color-yolk));
+  transition: width 0.7s var(--hero-ease);
+}
+
+.hero-meter-pts {
+  min-width: 4.4em;
+  text-align: right;
+}
+
+.hero-meter-pts b {
+  color: var(--color-yolk-deep);
+}
+
+/* 알 아래에 둥지를 겹치기 */
+.hero-nest {
+  position: absolute;
+  z-index: 2;
+  bottom: -25px;
+  left: 50%;
+
+  width: 104%;
+  height: auto;
+
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ----- 아기새 (알 뒤에 숨어 있음) ----- */
+.hero-chick {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 0;
+  width: 38%;
+  height: auto;
+  overflow: visible;
+  transform: translate(-50%, 55%);
+  transition: transform 0.9s var(--hero-pop);
+  pointer-events: none;
+}
+
+.hero-chick-body {
+  fill: #ffe48a;
+}
+
+.hero-chick-body,
+.hero-chick-shell,
+.hero-chick-wing,
+.hero-chick-beak {
+  stroke: var(--color-twig);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.hero-chick-wing {
+  fill: #ffd86b;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hero-chick-shell {
+  fill: var(--color-egg);
+}
+
+.hero-chick-beak {
+  fill: var(--color-yolk-dark);
+}
+
+.hero-chick-eye {
+  fill: var(--color-twig);
+}
+
+.hero-chick-shine {
+  fill: #fff;
+}
+
+.hero-chick-blush {
+  fill: #ff9d85;
+  opacity: 0.55;
+}
+
+/* 30모이~: 고개를 내밀어요 */
+.hero-stage[data-stage="1"] .hero-chick {
+  transform: translate(-50%, -66%);
+}
+
+/* 60모이~: 날아간 뒤라 비어 있음 (움직임을 줄인 설정에서도 이 상태가 됨) */
+.hero-stage[data-stage="2"] .hero-chick {
+  transform: translate(-50%, -66%);
+  opacity: 0;
+}
+
+/* 모이·깃털이 튀어 오르는 조각 (JS가 만들어 붙이고 끝나면 지움) */
+.hero-burst {
+  position: absolute;
+  z-index: 6;
+  overflow: visible;
+  fill: currentColor;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* 알 누르기 안내 버튼 */
+.hero-poke {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px auto 0;
+  padding: 9px 20px;
+  background: var(--color-white);
+  border: 2px solid var(--color-twig);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--color-twig);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.15s;
+}
+
+.hero-poke:hover {
+  background: var(--color-egg);
+}
+
+.hero-poke:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--color-twig);
+}
+
+.hero-poke-emoji {
+  display: inline-block;
+}
+
+/* 아래로 내려가라는 안내 */
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  translate: -50% 0;
+  color: var(--color-bark);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: calc(1 - var(--hero-scroll) * 4);
+}
+
+.hero-scroll svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--color-twig);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* ===== Hero 움직임 (움직임을 줄이도록 설정하지 않은 사람에게만) ===== */
+
+@keyframes heroSunrise {
+  from {
+    transform: translateY(260px) scale(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes heroSpin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes heroRise {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.55;
+  }
+  100% {
+    translate: var(--dx) -900px;
+    opacity: 0;
+  }
+}
+
+@keyframes heroSway {
+  from {
+    translate: -14px 0;
+    rotate: -28deg;
+  }
+  to {
+    translate: 14px 0;
+    rotate: 28deg;
+  }
+}
+
+@keyframes heroFadeUp {
   from {
     opacity: 0;
-    transform: translateY(25px);
+    transform: translateY(22px);
   }
+}
 
+@keyframes heroLineUp {
+  from {
+    transform: translateY(112%);
+  }
+}
+
+@keyframes heroMark {
+  from {
+    transform: rotate(-1deg) scaleX(0);
+  }
+}
+
+@keyframes heroPing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 169, 63, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(232, 169, 63, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 169, 63, 0);
+  }
+}
+
+@keyframes heroShine {
+  0%, 55% {
+    left: -70%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+
+@keyframes heroFloat {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+@keyframes heroWobble {
+  0%, 100% {
+    rotate: -1.4deg;
+  }
+  50% {
+    rotate: 1.4deg;
+  }
+}
+
+@keyframes heroShake {
+  0% {
+    rotate: 0deg;
+    scale: 1;
+  }
+  15% {
+    rotate: -5deg;
+    scale: 1.03 0.97;
+  }
+  35% {
+    rotate: 5deg;
+  }
+  55% {
+    rotate: -3.5deg;
+    scale: 0.99 1.02;
+  }
+  75% {
+    rotate: 2deg;
+  }
+  100% {
+    rotate: 0deg;
+    scale: 1;
+  }
+}
+
+@keyframes heroPop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.18) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heroNewCard {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+
+@keyframes heroPeek {
+  from {
+    rotate: -5deg;
+  }
   to {
+    rotate: 5deg;
+  }
+}
+
+@keyframes heroFlap {
+  from {
+    rotate: 16deg;
+  }
+  to {
+    rotate: -34deg;
+  }
+}
+
+@keyframes heroFly {
+  0% {
+    transform: translate(-50%, -66%);
     opacity: 1;
+  }
+  18% {
+    transform: translate(-50%, -52%) scale(1.06, 0.94);
+  }
+  100% {
+    transform: translate(-50%, -430%) rotate(-12deg) scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes heroNudge {
+  0%, 60%, 100% {
+    transform: rotate(0);
+  }
+  70% {
+    transform: rotate(-16deg);
+  }
+  80% {
+    transform: rotate(14deg);
+  }
+  90% {
+    transform: rotate(-8deg);
+  }
+}
+
+@keyframes heroBounce {
+  0%, 100% {
     transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
 
-  /* 첫 번째: 피드백 카드 */
-  .hero .hero-feedback-card {
-    animation: heroCardSlideUp 0.7s ease-out 0.3s backwards;
+  /* 처음 열릴 때: 해가 뜨고, 글이 차례로 올라오고, 알이 튀어나옴 */
+  .hero-sun {
+    animation: heroSunrise 2.2s var(--hero-ease) backwards;
+  }
+  .hero-rays {
+    animation: heroSpin 120s linear infinite, heroFadeUp 2.4s ease-out backwards;
   }
 
-  /* 두 번째: 피드백 작성 보상 */
-  .hero .hero-preview-reward {
-    animation: heroCardSlideUp 0.7s ease-out 1s backwards;
+  .hero-seed {
+    animation: heroRise var(--t) linear var(--d) infinite;
+  }
+  .hero-seed svg {
+    animation: heroSway calc(var(--t) / 5) ease-in-out infinite alternate;
+  }
+
+  .hero-eyebrow {
+    animation: heroFadeUp 0.7s var(--hero-ease) 0.05s backwards;
+  }
+  .hero-eyebrow-dot {
+    animation: heroPing 2.2s ease-out infinite;
+  }
+
+  .hero-line-in {
+    animation: heroLineUp 0.95s var(--hero-ease) calc(0.15s + var(--i) * 0.13s) backwards;
+  }
+  .hero-title-color::after {
+    animation: heroMark 0.8s var(--hero-ease) 1.05s backwards;
+  }
+
+  .hero-desc {
+    animation: heroFadeUp 0.8s var(--hero-ease) 0.7s backwards;
+  }
+  .hero-note {
+    animation: heroFadeUp 0.8s var(--hero-ease) 0.85s backwards;
+  }
+  .hero-buttons {
+    animation: heroFadeUp 0.8s var(--hero-ease) 1s backwards;
+  }
+  .hero-trust {
+    animation: heroFadeUp 0.8s var(--hero-ease) 1.15s backwards;
+  }
+
+  .hero-btn-main::after {
+    animation: heroShine 3.8s ease-in-out 2.2s infinite;
+  }
+  .hero-note[open] p {
+    animation: heroFadeUp 0.4s var(--hero-ease);
+  }
+
+  .hero-visual {
+    animation: heroFadeUp 1s var(--hero-ease) 0.3s backwards;
+  }
+  .hero-stage {
+    animation: heroFloat 6.5s ease-in-out infinite;
+  }
+  .hero-preview {
+    animation: heroWobble 7s ease-in-out infinite;
+  }
+  .hero-preview.is-shake {
+    animation: heroShake 0.65s ease-in-out;
+  }
+
+  .hero-poke-emoji {
+    animation: heroNudge 2.6s ease-in-out infinite;
+  }
+  .hero-scroll svg {
+    animation: heroBounce 1.6s ease-in-out infinite;
+  }
+
+  /* 새 피드백이 도착할 때 */
+  .hero-feedback-card.is-new {
+    animation: heroNewCard 0.55s var(--hero-pop);
+  }
+  .hero-preview-reward.is-pop {
+    animation: heroPop 0.5s var(--hero-pop);
+  }
+
+  /* 아기새: 고개를 갸웃갸웃 → 어른새가 되어 날아감 */
+  .hero-stage[data-stage="1"] .hero-chick {
+    animation: heroPeek 2.2s ease-in-out infinite alternate;
+    transform-origin: 50% 100%;
+  }
+  .hero-stage[data-stage="1"] .hero-chick-wing--l {
+    animation: heroFlap 0.9s ease-in-out 0.6s 3 alternate;
+  }
+  .hero-stage[data-stage="1"] .hero-chick-wing--r {
+    animation: heroFlap 0.9s ease-in-out 0.6s 3 alternate-reverse;
+  }
+
+  .hero-stage[data-stage="2"] .hero-chick {
+    animation: heroFly 1.5s cubic-bezier(0.5, 0, 0.9, 0.6) forwards;
+  }
+  .hero-stage[data-stage="2"] .hero-chick-wing--l {
+    animation: heroFlap 0.14s ease-in-out infinite alternate;
+  }
+  .hero-stage[data-stage="2"] .hero-chick-wing--r {
+    animation: heroFlap 0.14s ease-in-out infinite alternate-reverse;
+  }
+}
+
+/* 움직임을 줄이는 설정: 마우스 기울기·스크롤 흐려짐도 쓰지 않음 */
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage {
+    transform: none;
+  }
+  .hero-text,
+  .hero-visual {
+    translate: none;
+    opacity: 1;
   }
 }
 
 
 /* 태블릿 및 작은 화면 입니다. */
 @media (max-width: 1024px) {
+  .hero {
+    min-height: 0;
+    padding-top: 56px;
+    padding-bottom: 104px;
+  }
+
   .hero-inner {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
   }
 
   .hero-text {
@@ -508,43 +1329,83 @@ button:focus-visible {
   }
 
   .hero-title {
-    font-size: clamp(32px, 5vw, 46px);
+    font-size: clamp(36px, 7.4vw, 60px);
+  }
+
+  .hero-sun,
+  .hero-rays {
+    left: 50%;
+    top: 62%;
   }
 
   .hero-visual {
-    width: 100%;
     max-width: 420px;
-    margin: 0 auto;
   }
 }
 
 /* 모바일 */
 @media (max-width: 768px) {
+  .hero {
+    padding-top: 40px;
+    padding-bottom: 88px;
+  }
+
   .hero-inner {
-    display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
+    gap: 28px;
   }
 
   .hero-title {
-    font-size: clamp(30px, 8vw, 38px);
+    font-size: clamp(32px, 9.4vw, 44px);
   }
 
-  .hero-desc {
+  .hero-desc strong {
+    font-size: 19px;
+  }
+
+  .hero-desc small {
+    font-size: 14px;
+  }
+
+  .hero .btn {
+    padding: 14px 24px;
     font-size: 16px;
+  }
+
+  .hero-sun {
+    width: 520px;
+    height: 520px;
+    margin: -260px 0 0 -260px;
+  }
+
+  .hero-rays {
+    width: 1000px;
+    height: 1000px;
+    margin: -500px 0 0 -500px;
   }
 
   .hero-visual {
     max-width: 360px;
+    padding-top: 56px;
+  }
+
+  .hero-stage {
+    padding-bottom: 72px;
   }
 
   .hero-preview {
-    width: 90%;
+    width: 92%;
+    padding: 12% 7% 14%;
+  }
+
+  .hero-feedback-content {
+    min-height: 4.8em;
+  }
+
+  .hero-scroll {
+    display: none;
   }
 }
-
-
-
 
 /* ===== 섹션 2. 문제·해결 (주요 기능) | 담당: 김승주 ===== */
 

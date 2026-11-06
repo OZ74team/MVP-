@@ -37,86 +37,219 @@
   </header>
 
   <main>
-    <!-- ===== 섹션 1. 첫 화면 | 담당: 백종현 ===== -->
+
+
+    <!-- ===== 섹션 1. 첫 화면 | 담당: 백종현 (v2.1 리뉴얼) =====-->
     <section id="hero" class="hero">
+
+      <!-- 배경: 떠오르는 해 + 천천히 도는 햇살 + 둥둥 떠오르는 모이·깃털 (꾸밈용) -->
+      <div class="hero-sky" aria-hidden="true">
+        <span class="hero-rays"></span>
+        <span class="hero-sun"></span>
+        <span class="hero-seed"
+              style="--x:6%; --s:18px; --t:19s; --d:-4s; --dx:40px; --c:var(--color-yolk)">
+          <svg viewBox="0 0 16 16">
+            <use href="#heroSeed"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:17%; --s:26px; --t:24s; --d:-15s; --dx:-30px; --c:#ffffff">
+          <svg viewBox="0 0 24 24">
+            <use href="#heroFeather"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:29%; --s:14px; --t:17s; --d:-9s; --dx:60px; --c:var(--color-yolk-dark)">
+          <svg viewBox="0 0 16 16">
+            <use href="#heroSeed"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:41%; --s:22px; --t:26s; --d:-2s; --dx:-50px; --c:#fff4cf">
+          <svg viewBox="0 0 24 24">
+            <use href="#heroFeather"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:53%; --s:16px; --t:20s; --d:-12s; --dx:30px; --c:var(--color-yolk)">
+          <svg viewBox="0 0 16 16">
+            <use href="#heroSeed"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:64%; --s:28px; --t:28s; --d:-20s; --dx:-40px; --c:#ffffff">
+          <svg viewBox="0 0 24 24">
+            <use href="#heroFeather"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:75%; --s:15px; --t:18s; --d:-6s; --dx:50px; --c:var(--color-yolk-dark)">
+          <svg viewBox="0 0 16 16">
+            <use href="#heroSeed"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:86%; --s:24px; --t:25s; --d:-17s; --dx:-60px; --c:#fff4cf">
+          <svg viewBox="0 0 24 24">
+            <use href="#heroFeather"/>
+          </svg>
+        </span>
+        <span class="hero-seed"
+              style="--x:94%; --s:17px; --t:21s; --d:-10s; --dx:-20px; --c:var(--color-yolk)">
+          <svg viewBox="0 0 16 16">
+            <use href="#heroSeed"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- 그림 재료 모음 (화면에는 안 보임): 모이(씨앗) · 깃털 -->
+      <svg class="hero-defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <symbol id="heroSeed" viewBox="0 0 16 16">
+            <ellipse cx="5.5" cy="10" rx="2.3" ry="3.1" transform="rotate(-25 5.5 10)"/>
+            <ellipse cx="10.5" cy="10.5" rx="2.3" ry="3.1" transform="rotate(15 10.5 10.5)"/>
+            <ellipse cx="8.2" cy="4.8" rx="2.1" ry="2.9" transform="rotate(35 8.2 4.8)"/>
+          </symbol>
+          <symbol id="heroFeather" viewBox="0 0 24 24">
+            <!-- 깃털 몸통 -->
+            <path d="M12 2 C17.5 6 18.5 13 13.2 20.5 L12 21.5 L10.8 20.5 C5.5 13 6.5 6 12 2 Z"
+                  style="fill: currentColor; stroke: #2b211a; stroke-width: 1.1; stroke-linejoin: round"/>
+            <!-- 깃털 가운데 줄기 -->
+            <path d="M12 4.5 V23"
+                  style="fill: none; stroke: #2b211a; stroke-width: 1.1; stroke-linecap: round"/>
+          </symbol>
+        </defs>
+      </svg>
+
       <div class="section-inner hero-inner">
         <div class="hero-text">
-          <h1 class="hero-title"><span class="hero-title-color">내 아이디어</span><br>다른 사람들은 어떻게 생각할까?</h1>
+          <p class="hero-eyebrow"><span class="hero-eyebrow-dot" aria-hidden="true"></span>예비 창업가를 위한 MVP 피드백 커뮤니티</p>
+
+          <!-- 제목: 한 줄씩 아래에서 올라오고, "내 아이디어"에 형광펜이 그어짐 -->
+          <h1 class="hero-title">
+            <span class="hero-line" style="--i:0"><span class="hero-line-in"><span class="hero-title-color">내 아이디어</span></span></span>
+            <span class="hero-line" style="--i:1"><span class="hero-line-in">다른 사람들은</span></span>
+            <span class="hero-line" style="--i:2"><span class="hero-line-in">어떻게 생각할까?</span></span>
+          </h1>
+
           <p class="hero-desc">
-            <strong>혼자 만든 MVP 이제 함께 발전시켜 보세요.</strong> <br>
+            <strong>혼자 만든 MVP 이제 함께 발전시켜 보세요.</strong>
             <small>다른 예비 창업가들과 서로의 서비스를 공유하고, 솔직한 피드백을 주고받으며 아이디어의 가능성을 발견해요.</small>
-          </p>   
-          <div class="hero-note">
-            <div class="hero-note-icon">💡</div>
+          </p>
 
-            <div class="hero-note-content">
-              <strong>MVP가 무엇인가요?</strong>
+          <!-- MVP 설명은 눌러야 펼쳐지게 접어서, 첫 화면을 가볍게 -->
+          <details class="hero-note">
+            <summary>
+              <span class="hero-note-icon" aria-hidden="true">💡</span>
+              MVP가 무엇인가요?
+              <span class="hero-note-plus" aria-hidden="true"></span>
+            </summary>
+            <p>
+              아이디어를 최소한의 기능으로 구현해 검증하는 제품이에요.
+              둥지에서는 랜딩페이지만 있어도 공유하고 피드백받을 수 있어요.
+            </p>
+          </details>
 
-              <p>
-                아이디어를 최소한의 기능으로 구현해
-                검증하는 제품이에요.
-                둥지에서는 랜딩페이지만 있어도
-                공유하고 피드백받을 수 있어요.
-              </p>
-            </div>
-          </div>
           <div class="hero-buttons">
-            <a href="#demo" class="btn btn-primary">피드백 남겨 보기</a>
+            <a href="#demo" class="btn btn-primary hero-btn-main">피드백 남겨 보기 <span class="hero-btn-arrow" aria-hidden="true">→</span></a>
             <a href="#problem" class="btn btn-ghost">둥지가 필요한 이유</a>
           </div>
+          <p class="hero-trust">가입 없이 바로 체험해 볼 수 있어요</p>
         </div>
 
-        <!-- 오른쪽 그림: 알 모양 안에 피드백이 오가는 장면 (꾸밈용) -->
-        
-        <!-- 오른쪽 알 + 둥지 영역 -->
-        <div class="hero-visual" aria-hidden="true">
-          <div class="hero-preview">
-            <!-- MVP 소개 카드 -->
-            <div class="hero-preview-card">
-              <div class="hero-mvp-header">
-                <span class="hero-mvp-icon">🌱</span>
-                <div>
-                  <div class="hero-mvp-title-row">
-                    <p class="hero-preview-name">물주기 알리미</p>
-                    <span class="hero-mvp-badge">MVP</span>
+        <!-- 오른쪽: 알이 깨어나는 무대 (data-stage 0 알 → 1 아기새 → 2 어른새) -->
+        <div class="hero-visual">
+          <div class="hero-stage" data-hero-stage data-stage="0">
+
+            <!-- 아기새: 알 뒤에 숨어 있다가 30모이부터 고개를 내밀고, 60모이에 날아올라요 -->
+            <svg class="hero-chick" viewBox="0 0 140 110" aria-hidden="true" focusable="false">
+              <ellipse class="hero-chick-wing hero-chick-wing--l" cx="26" cy="72" rx="14" ry="9"/>
+              <ellipse class="hero-chick-wing hero-chick-wing--r" cx="114" cy="72" rx="14" ry="9"/>
+              <circle class="hero-chick-body" cx="70" cy="66" r="40"/>
+              <ellipse class="hero-chick-blush" cx="43" cy="77" rx="6" ry="3.6"/>
+              <ellipse class="hero-chick-blush" cx="97" cy="77" rx="6" ry="3.6"/>
+              <circle class="hero-chick-eye" cx="55" cy="65" r="4.2"/>
+              <circle class="hero-chick-eye" cx="85" cy="65" r="4.2"/>
+              <circle class="hero-chick-shine" cx="56.4" cy="63.4" r="1.5"/>
+              <circle class="hero-chick-shine" cx="86.4" cy="63.4" r="1.5"/>
+              <path class="hero-chick-beak" d="M63.5 73 L76.5 73 L70 83 Z"/>
+              <!-- 머리에 쓴 알껍데기 -->
+              <path class="hero-chick-shell" d="M30 52 L40 38 L51 51 L60 34 L70 50 L80 34 L90 51 L100 38 L110 52 Q110 18 70 18 Q30 18 30 52 Z"/>
+            </svg>
+
+            <!-- 크림색 알: 안에 MVP 카드 · 도착하는 피드백 · 모이 보상 -->
+            <div class="hero-preview" data-hero-egg aria-hidden="true">
+              <!-- 금: 모이가 쌓이면 선이 그어지듯 나타남 -->
+              <svg class="hero-crack" viewBox="0 0 200 70" preserveAspectRatio="none" focusable="false">
+                <path class="hero-crack-line hero-crack-line--1" pathLength="1" d="M4 40 L24 20 L42 38 L62 14 L82 36 L102 12 L124 36 L144 16 L164 38 L184 22 L196 38"/>
+                <path class="hero-crack-line hero-crack-line--2" pathLength="1" d="M62 14 L56 2 M102 12 L108 0 M144 16 L150 4 M42 38 L36 52 M124 36 L130 52"/>
+              </svg>
+              <span class="hero-shine"></span>
+
+              <!-- MVP 소개 카드 -->
+              <div class="hero-preview-card">
+                <div class="hero-mvp-header">
+                  <span class="hero-mvp-icon">🌱</span>
+                  <div>
+                    <div class="hero-mvp-title-row">
+                      <p class="hero-preview-name">물주기 알리미</p>
+                      <span class="hero-mvp-badge">MVP</span>
+                    </div>
+                    <p class="hero-preview-desc">반려식물 관리 서비스</p>
                   </div>
-                  <p class="hero-preview-desc">
-                    반려식물 관리 서비스
-                  </p>
                 </div>
               </div>
-            </div>
-            <!-- 실제 피드백처럼 보이는 예시 카드 -->
-            <div class="hero-feedback-card">
-              <div class="hero-feedback-heading">
-                <strong>💬 최신 피드백</strong>
-                <span>총 12개</span>
+
+              <!-- 피드백 카드: 새 피드백이 도착할 때마다 내용이 바뀜 (예시 문구) -->
+              <div class="hero-feedback-card" data-hero-card>
+                <div class="hero-feedback-heading">
+                  <strong>💬 최신 피드백</strong>
+                  <span>총 <b data-hero-total>12</b>개</span>
+                </div>
+                <div class="hero-feedback-user">
+                  <span class="hero-avatar" data-hero-avatar>👩🏻</span>
+                  <strong data-hero-name>아이디어러버</strong>
+                  <span class="hero-feedback-tag">피드백</span>
+                </div>
+                <p class="hero-feedback-content" data-hero-text>
+                  첫 화면에서 물 주는 날짜를 바로 확인할 수 있으면 더 편할 것 같아요!
+                </p>
+                <div class="hero-feedback-actions">
+                  <span data-hero-likes>👍 도움돼요 8</span>
+                  <span>답글 달기</span>
+                </div>
               </div>
-              <div class="hero-feedback-user">
-                <span class="hero-avatar">👩🏻</span>
-                <strong>아이디어러버</strong>
-                <span class="hero-feedback-tag">피드백</span>
+
+              <!-- 보상: 피드백이 도착하면 톡 튀고, 아래 막대가 차오름 -->
+              <div class="hero-preview-reward" data-hero-reward>
+                🐣 피드백 작성 모이 +10
               </div>
-              <p class="hero-feedback-content">
-                첫 화면에서 물 주는 날짜를
-                바로 확인할 수 있으면
-                더 편할 것 같아요!
-              </p>
-              <div class="hero-feedback-actions">
-                <span>👍 도움돼요 8</span>
-                <span>답글 달기</span>
+              <div class="hero-meter">
+                <span class="hero-meter-stage" data-hero-stage-name>🥚 알</span>
+                <span class="hero-meter-bar"><span class="hero-meter-fill" data-hero-fill></span></span>
+                <span class="hero-meter-pts">모이 <b data-hero-points>0</b></span>
               </div>
             </div>
-            <!-- 보상 -->
-            <div class="hero-preview-reward">
-              🐣 피드백 작성 모이 +10
-            </div>
+
+            <!-- 알 아래에 둥지를 겹치기 -->
+            <img src="nest.png" class="hero-nest" alt="">
           </div>
-          <!-- 알 아래에 둥지를 겹치기 -->
-          <img src="nest.png" class="hero-nest" alt="">
+
+          <button type="button" class="hero-poke" data-hero-poke>
+            <span class="hero-poke-emoji" aria-hidden="true">🥚</span>
+            알을 눌러 새 피드백 받기
+          </button>
         </div>
       </div>
+
+      <!-- 아래로 내려가면 섹션 2의 "날아오르는" 연출로 이어져요 -->
+      <a href="#problem" class="hero-scroll" aria-label="다음 내용으로 내려가기">
+        <span>아래로 날아오르기</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 8 L10 14 L16 8" /></svg>
+      </a>
     </section>
+
+
 
     <!-- ===== 섹션 2. 문제·해결 (주요 기능) | 담당: 김승주 ===== -->
     <section id="problem" class="problem">

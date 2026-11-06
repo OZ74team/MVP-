@@ -548,26 +548,36 @@ button:focus-visible {
 
 /* ===== 섹션 2. 문제·해결 (주요 기능) | 담당: 김승주 ===== */
 
-/*
-  섹션 2 전용 색 변수 (꿀빛 둥지 팔레트)
-  - 공통 :root(팀장 관리)는 건드리지 않고, 이 섹션 안에서만 쓰는 색을 .problem에 둡니다.
-  - 따뜻한 둥지 + 꿀빛 톤: 종이색 바탕 위에 크림 → 꿀 → 진한 꿀색 단계로만 색을 씁니다.
-  - 굵은 테두리 대신 얇은 선 + 겹친 그림자로 깔끔한 입체감을 냅니다.
-*/
+/* 섹션 2 전용 색 변수 */
 .problem {
-  --problem-paper: #fcf7ee;        /* 바탕: 따뜻한 종이색 (= 낮) */
-  --problem-dawn: #fbf1dd;         /* 아침: 햇빛 받은 연한 크림 (붉은 기 없이) */
-  --problem-sky-end: #d6eaf8;      /* 하늘: 섹션 맨 아래 */
-  --problem-progress: 0.5;         /* 스크롤 진행도 0(아침)~1(하늘). JS가 바꿈, JS가 없으면 낮 */
+  --problem-paper: #fcf7ee;
+  --problem-dawn: #fbf1dd;
+  --problem-sky-end: #d6eaf8;
+  --problem-progress: 0.5;
   --problem-card: #ffffff;
-  --problem-ink: #2b211a;          /* 진한 글자: 에스프레소 */
-  --problem-sub: #7a6a5d;          /* 보조 글자 */
-  --problem-line: rgba(43, 33, 26, 0.08);   /* 얇은 선 */
-  --problem-cream: #ffeccb;        /* 크림 (배경 빛·형광펜) */
-  --problem-accent: #e8a93f;       /* 강조: 꿀색 */
-  --problem-accent-deep: #9a6418;  /* 강조 글자용 진한 꿀색 (흰 바탕에서도 잘 읽히게) */
-  --problem-honey: #ffe1a3;        /* 연한 꿀 */
-  --problem-straw: #f3dcb3;        /* 마른 지푸라기 */
+  --problem-ink: #2b211a;
+  --problem-sub: #7a6a5d;
+  --problem-line: rgba(43, 33, 26, 0.08);
+  --problem-cream: #ffeccb;
+  --problem-accent: #e8a93f;
+  --problem-accent-deep: #9a6418;
+  --problem-honey: #ffe1a3;
+  --problem-straw: #f3dcb3;
+  --problem-milk: #fffaf0;
+  --problem-sun-light: #fffbea;    /* 햇빛 가운데 */
+  --problem-sun: #fff1c4;          /* 햇빛 바깥 */
+  --problem-bluebird-pale: #d6ecfa; /* 파랑새 색 (어른새·깃털·땀방울) */
+  --problem-bluebird-mid: #5e9fcf;
+  --problem-bluebird-deep: #4a88bb;
+  --problem-bluebird-body: #a6d4f0;
+  --problem-chick-light: #fffdf0;  /* 아기새 색 (몸 가운데 → 가장자리, 날개, 부리) */
+  --problem-chick-mid: #fff1b8;
+  --problem-chick-deep: #f9dc8a;
+  --problem-chick-wing: #f6d77a;
+  --problem-chick-beak: #f2b046;
+  --problem-cloud-top: #ffffff;    /* 구름 (위 → 아래로 푸르스름하게) */
+  --problem-cloud-mid: #fbfdff;
+  --problem-cloud-bottom: #d3e3f0;
   --problem-shadow:
     0 1px 1px rgba(43, 33, 26, 0.04),
     0 6px 16px -4px rgba(43, 33, 26, 0.08),
@@ -576,23 +586,18 @@ button:focus-visible {
     0 2px 2px rgba(43, 33, 26, 0.05),
     0 12px 24px -6px rgba(43, 33, 26, 0.12),
     0 36px 64px -20px rgba(43, 33, 26, 0.22);
-  --problem-ease: cubic-bezier(0.22, 1, 0.36, 1);   /* 끝에서 살짝 감속하는 움직임 */
+  --problem-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   position: relative;
-  overflow: hidden;   /* 배경 빛 장식이 섹션 밖으로 나가지 않게 */
-  overflow: clip;     /* 지원하는 브라우저는 clip: 잘라 내기만 하고 스크롤 상자는 만들지 않음
-                         (hidden이면 "스크롤하면 떠오르기"가 페이지가 아닌 섹션 기준으로 계산돼 어긋남) */
+  overflow: hidden;
+  overflow: clip;     
   margin: 0 12px;
-  border-radius: 48px;   /* 페이지 위에 둥근 종이 한 장을 올려 둔 느낌 */
+  border-radius: 48px;
   background-color: var(--problem-paper);
   color: var(--problem-ink);
 }
 
-/*
-  스크롤할수록 아침 → 낮 → 하늘
-  - 앞 절반(0~0.5): 아침색 → 낮색, 뒤 절반(0.5~1): 낮색 → 하늘색으로 섞음
-  - color-mix를 모르는 오래된 브라우저는 위의 낮 종이색 그대로
-*/
+/* 스크롤할수록 아침 → 낮 → 하늘 */
 @supports (background-color: color-mix(in oklab, red, blue)) {
   .problem {
     background-color: color-mix(
@@ -603,7 +608,7 @@ button:focus-visible {
   }
 }
 
-/* 종이 질감: 아주 옅은 노이즈 무늬 (SVG 노이즈를 배경으로) */
+/* 종이 질감 */
 .problem::before {
   content: '';
   position: absolute;
@@ -613,13 +618,12 @@ button:focus-visible {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.17 0 0 0 0 0.13 0 0 0 0 0.1 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* 내용이 배경 장식 위에 오도록 */
 .problem .section-inner {
   position: relative;
   z-index: 1;
 }
 
-/* ----- 배경 장식: 꿀빛·크림색의 흐릿한 빛 두 개 (천천히 움직임) ----- */
+/* ----- 배경 장식 ----- */
 .problem-glow {
   position: absolute;
   width: 520px;
@@ -630,16 +634,15 @@ button:focus-visible {
   animation: problem-drift 16s ease-in-out infinite;
 }
 
-/* 해: 위쪽 왼편에서 비치는 햇빛. 가운데는 거의 흰빛, 바깥은 연한 노랑. 하늘로 갈수록 옅어짐 */
+/* 햇빛 */
 .problem-glow--sun {
   top: -180px;
   left: -160px;
-  background: radial-gradient(circle, #fffbea 0%, #fff1c4 45%, rgba(255, 241, 196, 0) 72%);
+  background: radial-gradient(circle, var(--problem-sun-light) 0%, var(--problem-sun) 45%, rgba(255, 241, 196, 0) 72%);
   filter: blur(40px);
   opacity: calc(0.95 - var(--problem-progress) * 0.6);
 }
 
-/* 아래쪽 빛: 처음엔 크림, 하늘로 갈수록 하늘색 */
 .problem-glow--sky {
   bottom: -200px;
   right: -160px;
@@ -653,14 +656,18 @@ button:focus-visible {
   }
 }
 
-/* 구름 (SVG): 진행도 0.55부터 서서히 나타나 천천히 옆으로 흘러감 */
+/* 구름 */
+.problem-cloud-stop-top    { stop-color: var(--problem-cloud-top); }
+.problem-cloud-stop-mid    { stop-color: var(--problem-cloud-mid); }
+.problem-cloud-stop-bottom { stop-color: var(--problem-cloud-bottom); }
+
 .problem-cloud {
   position: absolute;
   width: 220px;
   height: auto;
   overflow: visible;
   opacity: clamp(0, (var(--problem-progress) - 0.55) * 2.5, 0.95);
-  filter: drop-shadow(0 10px 14px rgba(80, 130, 170, 0.14));   /* 구름 아래 옅은 그림자 */
+  filter: drop-shadow(0 10px 14px rgba(80, 130, 170, 0.14));
   animation: problem-cloud 22s ease-in-out infinite alternate;
 }
 
@@ -670,7 +677,7 @@ button:focus-visible {
 }
 
 .problem-cloud--2 {
-  bottom: 20px;   /* 덤 카드 아래 여백에 떠 있게 */
+  bottom: 20px;
   right: 8%;
   scale: 0.7;
   animation-delay: -11s;
@@ -688,13 +695,12 @@ button:focus-visible {
 
 /* ----- 머리글 ----- */
 .problem-head {
-  position: relative;   /* 떠다니는 말풍선의 기준 위치 */
+  position: relative;
   max-width: 640px;
   margin: 0 auto 64px;
   text-align: center;
 }
 
-/* 제목 위 작은 라벨: 양옆에 짧은 선 */
 .problem-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -715,14 +721,13 @@ button:focus-visible {
   opacity: 0.5;
 }
 
-/* 공통 .section-title을 이 섹션에서만 덮어씀 */
 .problem .problem-title {
   margin-bottom: 18px;
   font-size: 42px;
   letter-spacing: -0.01em;
 }
 
-/* 형광펜 밑줄: 글자 아래쪽 40%만 크림색으로 칠함 */
+/* 형광펜 밑줄 */
 .problem-mark {
   background: linear-gradient(transparent 60%, var(--problem-cream) 60%);
   padding: 0 4px;
@@ -733,15 +738,13 @@ button:focus-visible {
   font-size: 17px;
 }
 
-/* ----- 떠다니는 피드백 말풍선 (꾸밈용, CSS만 사용) -----
-   제목 양옆에서 차례로 떠올랐다가 사라짐. 넓은 화면에서만 보임 */
+/* ----- 떠다니는 피드백 말풍선 ----- */
 .problem-floats {
   position: absolute;
   inset: 0;
-  pointer-events: none;   /* 마우스 클릭을 가로막지 않게 */
+  pointer-events: none;
 }
 
-/* 반투명 유리 느낌 말풍선 */
 .problem-float {
   position: absolute;
   padding: 8px 14px;
@@ -749,7 +752,7 @@ button:focus-visible {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 16px 16px 16px 4px;   /* 왼쪽 아래 꼬리 */
+  border-radius: 16px 16px 16px 4px;
   box-shadow: var(--problem-shadow);
   color: var(--problem-sub);
   font-size: 13px;
@@ -759,7 +762,6 @@ button:focus-visible {
   animation: problem-bubble 8s ease-in-out infinite;
 }
 
-/* 말풍선 앞 손그림 아이콘 (이모지 대신): 꿀색 칠 + 진한 선 */
 .problem-float-ico {
   display: inline-block;
   width: 14px;
@@ -778,7 +780,6 @@ button:focus-visible {
   fill: var(--problem-honey);
 }
 
-/* 말풍선마다 자리와 시작 시점을 다르게 → 번갈아 나타남 */
 .problem-float--1 { top: 10px;  left: -200px; }
 .problem-float--2 { top: 0;     right: -160px; animation-delay: -2s; border-radius: 16px 16px 4px 16px; }
 .problem-float--3 { top: 140px; left: -230px; animation-delay: -4s; }
@@ -790,7 +791,6 @@ button:focus-visible {
   85%, 100% { opacity: 0; translate: 0 -24px; scale: 1; }
 }
 
-/* 제목 옆 자리가 좁은 화면(1200px 이하)에서는 잘리지 않게 숨김 */
 @media (max-width: 1200px) {
   .problem-floats {
     display: none;
@@ -807,17 +807,16 @@ button:focus-visible {
 
 .problem-pair {
   display: grid;
-  grid-template-columns: 1fr 72px 1.25fr;   /* 말풍선 | 화살표 | 해결 카드 */
+  grid-template-columns: 1fr 72px 1.25fr;
   align-items: center;
 }
 
-/* 줄마다 아이콘 색을 조금씩 진하게: 크림 → 지푸라기 → 꿀
-   (--problem-tint: 동그라미 바탕, --problem-tint-strong: 아이콘 안 칠) */
+/* 줄마다 아이콘 색 */
 .problem-pair:nth-child(1) { --problem-tint: var(--problem-cream); --problem-tint-strong: #f3d9a6; }
 .problem-pair:nth-child(2) { --problem-tint: var(--problem-straw); --problem-tint-strong: #e6c38a; }
 .problem-pair:nth-child(3) { --problem-tint: var(--problem-honey); --problem-tint-strong: #f0be5c; }
 
-/* 고민 말풍선 (버튼): 반투명 유리 + 얇은 선, 왼쪽 아래 모서리를 좁혀 꼬리처럼 */
+/* 고민 말풍선 */
 .problem-pain {
   position: relative;
   display: flex;
@@ -837,7 +836,6 @@ button:focus-visible {
   transition: background-color 0.3s, border-color 0.3s, color 0.3s, translate 0.3s var(--problem-ease);
 }
 
-/* 말하는 사람 얼굴 */
 .problem-pain-avatar {
   flex-shrink: 0;
   width: 44px;
@@ -851,25 +849,62 @@ button:focus-visible {
   transition: rotate 0.3s var(--problem-ease);
 }
 
-/* 직접 그린 얼굴 (작은 새 얼굴) 색 */
+/* 얼굴 색 */
 .problem-face-head  { fill: #fff8ec; stroke: var(--problem-ink); stroke-width: 1.5; }
 .problem-face-line  { fill: none; stroke: var(--problem-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .problem-face-eye   { fill: var(--problem-ink); }
-.problem-face-beak  { fill: #e8a93f; }
+.problem-face-beak  { fill: var(--problem-accent); }
 .problem-face-blush { fill: #f2b6a0; opacity: 0.55; }
-.problem-face-drop  { fill: #8cc6ee; stroke: #4a88bb; stroke-width: 0.8; }   /* 땀방울: 진한 하늘 테두리로 또렷하게 */
-.problem-face-drop-shine { fill: #ffffff; }
+.problem-face-drop  { fill: #8cc6ee; stroke: var(--problem-bluebird-deep); stroke-width: 0.8; }
+.problem-face-drop-shine { fill: var(--problem-card); }
 
-/* 말풍선에 마우스를 올리면 얼굴이 고개를 갸웃 */
 .problem-pain:hover .problem-pain-avatar svg {
   rotate: -8deg;
+}
+
+/* 얼굴 움직임: 땀방울, 물음표, 말줄임표 */
+.problem-face-sweat,
+.problem-face-question,
+.problem-face-dot {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.problem-pain:hover .problem-face-sweat {
+  animation: problem-sweat 1.2s ease-in infinite;
+}
+
+.problem-pain:hover .problem-face-question {
+  animation: problem-question 0.8s ease-in-out infinite;
+}
+
+.problem-pain:hover .problem-face-dot {
+  animation: problem-dot 1.2s ease-in-out infinite;
+}
+
+.problem-pain:hover .problem-face-dot--2 { animation-delay: 0.2s; }
+.problem-pain:hover .problem-face-dot--3 { animation-delay: 0.4s; }
+
+@keyframes problem-sweat {
+  0%   { translate: 0 0;   opacity: 1; }
+  70%  { translate: 0 5px; opacity: 1; }
+  100% { translate: 0 7px; opacity: 0; }
+}
+
+@keyframes problem-question {
+  0%, 100% { translate: 0 0;    rotate: 0deg; }
+  40%      { translate: 0 -3px; rotate: 8deg; }
+}
+
+@keyframes problem-dot {
+  0%, 60%, 100% { opacity: 1; }
+  30%           { opacity: 0.15; }
 }
 
 .problem-pain-text {
   flex: 1;
 }
 
-/* "해결 보기" 안내: 오른쪽 작은 알약, 화살표가 함께 움직임 */
 .problem-pain-hint {
   flex-shrink: 0;
   padding: 4px 10px;
@@ -886,7 +921,7 @@ button:focus-visible {
   content: ' →';
 }
 
-/* 화살표: 옅은 선 위에 꿀색 선이 왼쪽부터 채워짐 (CSS로만 그림) */
+/* 화살표 */
 .problem-arrow {
   position: relative;
   height: 2px;
@@ -911,11 +946,7 @@ button:focus-visible {
   transition: border-color 0.3s 0.25s;
 }
 
-/*
-  고민과 해결 연결하기
-  - 말풍선에 마우스를 올리면(:has) 또는 눌렀을 때(.is-linked, script.js가 붙임)
-  - 말풍선이 진해지고 → 화살표가 채워지고 → 해결 카드가 떠오르며 꿀색 테두리로 빛남
-*/
+/* 고민 → 해결 연결 (마우스를 올리거나 누르면) */
 .problem-pair:has(.problem-pain:hover) .problem-pain,
 .problem-pair.is-linked .problem-pain {
   background-color: var(--problem-card);
@@ -946,7 +977,6 @@ button:focus-visible {
   box-shadow: 10px 12px 0 var(--problem-straw), 0 0 0 2px var(--problem-accent), 0 0 0 8px rgba(232, 169, 63, 0.14), var(--problem-shadow-up);
 }
 
-/* 눌렀을 때는 해결 카드가 한 번 '톡' 튀어 오름 */
 .problem-pair.is-linked .problem-feature {
   animation: problem-pop 0.5s var(--problem-ease) 0.2s;
 }
@@ -966,7 +996,7 @@ button:focus-visible {
   padding: 26px 28px;
   background-color: var(--problem-card);
   border-radius: 24px;
-  /* 입체감: 첫 줄은 카드 뒤에 한 장 더 겹친 지푸라기 판 (겹겹이 쌓인 둥지 느낌) */
+  /* 첫 줄: 카드 뒤에 겹친 지푸라기 판 */
   box-shadow: 6px 6px 0 var(--problem-straw), 0 0 0 1px var(--problem-line), var(--problem-shadow);
   transition:
     transform 0.35s var(--problem-ease),
@@ -979,29 +1009,26 @@ button:focus-visible {
   min-width: 0;
 }
 
-/* 마우스를 올리면: 카드가 떠오름
-   + 덤 카드(둘러보며 배우기)만 마우스 위치를 따라 살짝 기울어짐
-   (기울기 값 --problem-tilt-x/y는 script.js 섹션 2 블록이 data-problem-tilt 카드에만 넣어 줌.
-    해결 카드 세 개는 값이 없어서 0deg → 기울지 않고 떠오르기만 함) */
+/* 마우스를 올리면 떠오름 */
 .problem-feature:hover,
+.problem-bonus:hover {
+  transform: translateY(-4px);
+  box-shadow: 10px 12px 0 var(--problem-straw), 0 0 0 1px var(--problem-line), var(--problem-shadow-up);
+}
+
+/* 덤 카드만 마우스를 따라 기울어짐 (기울기·조명 위치는 JS가 넣음) */
 .problem-bonus:hover {
   transform:
     perspective(900px)
     rotateX(var(--problem-tilt-x, 0deg))
     rotateY(var(--problem-tilt-y, 0deg))
     translateY(-4px);
-  /* 떠오르면 뒤판이 더 벌어짐 */
-  box-shadow: 10px 12px 0 var(--problem-straw), 0 0 0 1px var(--problem-line), var(--problem-shadow-up);
 }
 
-/* 기울이는 동안에는 마우스를 바로 따라가도록 전환 시간을 짧게 */
-.problem-feature.is-tilting,
 .problem-bonus.is-tilting {
   transition: transform 0.12s linear, translate 0.35s var(--problem-ease), box-shadow 0.35s var(--problem-ease);
 }
 
-/* 마우스 자리에 은은한 조명 (위치 --problem-glare-x/y도 JS가 넣어 줌) */
-.problem-feature::after,
 .problem-bonus::after {
   content: '';
   position: absolute;
@@ -1017,13 +1044,11 @@ button:focus-visible {
   transition: opacity 0.35s;
 }
 
-.problem-feature.is-tilting::after,
 .problem-bonus.is-tilting::after {
   opacity: 1;
 }
 
-/* 아이콘: 빛이 비친 듯한 입체 알 모양 바탕 안에 직접 그린 라인 아이콘
-   (왼쪽 위는 밝게, 가장자리는 줄 색으로 진하게 + 안쪽 그늘 + 아래 그림자) */
+/* 아이콘 */
 .problem-feature-icon {
   flex-shrink: 0;
   display: grid;
@@ -1031,13 +1056,12 @@ button:focus-visible {
   width: 56px;
   height: 64px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  background: radial-gradient(circle at 35% 28%, #ffffff 0%, var(--problem-tint, var(--problem-cream)) 45%, var(--problem-tint-strong, var(--problem-straw)) 100%);
+  background: radial-gradient(circle at 35% 28%, var(--problem-card) 0%, var(--problem-tint, var(--problem-cream)) 45%, var(--problem-tint-strong, var(--problem-straw)) 100%);
   box-shadow:
     inset -4px -6px 10px rgba(43, 33, 26, 0.07),
     0 8px 16px -6px rgba(176, 120, 40, 0.35);
 }
 
-/* 라인 아이콘 공통: 선은 진한 글자색, 안쪽 칠은 줄 색 */
 .problem-ico {
   width: 30px;
   height: 30px;
@@ -1050,10 +1074,9 @@ button:focus-visible {
 }
 
 .problem-ico-fill  { fill: var(--problem-tint-strong, var(--problem-straw)); }
-.problem-ico-white { fill: #ffffff; }
+.problem-ico-white { fill: var(--problem-card); }
 .problem-ico-dot   { fill: var(--problem-ink); stroke: none; }
 
-/* 마우스를 올리면 아이콘 알이 살짝 흔들림 (부화하려는 느낌) */
 .problem-feature:hover .problem-feature-icon,
 .problem-bonus:hover .problem-feature-icon {
   animation: problem-wobble 0.6s ease-in-out;
@@ -1066,7 +1089,6 @@ button:focus-visible {
   75%      { rotate: -4deg; }
 }
 
-/* "둥지에서는" 작은 라벨 */
 .problem-feature-tag {
   margin-bottom: 2px;
   color: var(--problem-accent-deep);
@@ -1085,13 +1107,12 @@ button:focus-visible {
   font-size: 15px;
 }
 
-/* ----- 깃털 반응 체험: 예시 피드백 + [도움 됐어요] 버튼 + 떨어지는 깃털 ----- */
+/* ----- 깃털 반응 체험 ----- */
 .problem-help {
-  position: relative;   /* 떨어지는 깃털의 기준 위치 */
+  position: relative;
   margin-top: 16px;
 }
 
-/* 예시 피드백: 왼쪽에 꿀색 선이 있는 인용 상자 */
 .problem-help-quote {
   padding: 12px 14px;
   border-left: 3px solid var(--problem-honey);
@@ -1109,7 +1130,6 @@ button:focus-visible {
   font-weight: 700;
 }
 
-/* "예시" 작은 꼬리표 */
 .problem-help-who em {
   margin-left: 6px;
   padding: 1px 6px;
@@ -1128,7 +1148,7 @@ button:focus-visible {
   margin-top: 12px;
 }
 
-/* [도움 됐어요] 버튼: 알약 모양. 눌린 상태(aria-pressed="true")면 꿀색으로 채워짐 */
+/* [도움돼요] 버튼 */
 .problem-help-btn {
   display: inline-flex;
   align-items: center;
@@ -1153,24 +1173,20 @@ button:focus-visible {
   scale: 0.95;
 }
 
-/* 눌린 상태: 섹션 왼쪽 위 햇빛처럼 가운데는 흰빛, 바깥은 연한 노랑 + 은은하게 번지는 빛 */
 .problem-help-btn[aria-pressed="true"] {
   border-color: #f3dc9a;
-  background: radial-gradient(circle at 30% 35%, #fffbea 0%, #fff1c4 75%);
+  background: radial-gradient(circle at 30% 35%, var(--problem-sun-light) 0%, var(--problem-sun) 75%);
   box-shadow: 0 0 0 4px rgba(255, 241, 196, 0.6), 0 0 18px rgba(255, 228, 150, 0.55);
 }
 
-/* 숫자 동그라미: 눌린 버튼 바탕 그라데이션 중 진한 쪽 햇빛 색(#fff1c4)으로 꽉 채움
-   → 버튼을 누르면 바탕과 이어져 하나처럼 보임 */
 .problem-help-count {
   min-width: 1.6em;
   padding: 0 6px;
   border-radius: 999px;
-  background-color: #fff1c4;
+  background-color: var(--problem-sun);
   text-align: center;
 }
 
-/* 숫자가 바뀔 때 한 번 톡 (JS가 .is-bump를 잠깐 붙임) */
 .problem-help-count.is-bump {
   animation: problem-pop 0.4s var(--problem-ease);
 }
@@ -1180,17 +1196,16 @@ button:focus-visible {
   font-size: 12px;
 }
 
-/* 깃털 그림 색 (버튼 아이콘 + 떨어지는 깃털 공통): 하늘빛 어른새의 깃털이라 같은 파란빛 */
+/* 깃털 */
 .problem-help-ico {
   width: 18px;
   height: 18px;
 }
 
-.problem-feather-vane { fill: #d6ecfa; stroke: #5e9fcf; stroke-width: 1.2; }   /* 어른새 덮깃·머리 깃 색 */
-.problem-feather-line { fill: none; stroke: #4a88bb; stroke-width: 1; stroke-linecap: round; }   /* 어른새 긴 깃 색 */
+.problem-feather-vane { fill: var(--problem-bluebird-pale); stroke: var(--problem-bluebird-mid); stroke-width: 1.2; }
+.problem-feather-line { fill: none; stroke: var(--problem-bluebird-deep); stroke-width: 1; stroke-linecap: round; }
 
-/* 떨어지는 깃털: JS가 버튼 위치에 만들어 붙이고, 끝나면 지움
-   --problem-dx(옆으로 흔들리는 거리), --problem-fall(떨어지는 깊이), --problem-rot(도는 각도)은 깃털마다 JS가 다르게 줌 */
+/* 떨어지는 깃털 (위치·흔들림 값은 JS가 넣음) */
 .problem-feather {
   position: absolute;
   width: 22px;
@@ -1208,10 +1223,9 @@ button:focus-visible {
   100% { opacity: 0; translate: var(--problem-dx) var(--problem-fall); rotate: var(--problem-rot); }
 }
 
-/* ----- 등급 성장 그림: 진짜 둥지 속 알 → 껍질 쓴 아기새 → 날아가는 하늘빛 어른새 ----- */
+/* ----- 등급 성장 그림: 알 → 아기새 → 어른새 ----- */
 
-/* 그림 재료(필터·둥지)만 담은 SVG: 자리를 차지하지 않게 숨김
-   (display: none으로 숨기면 일부 브라우저에서 필터가 안 먹어서 크기 0으로 숨김) */
+/* 그림 재료만 담은 SVG는 숨김 */
 .problem-svg-defs {
   position: absolute;
   width: 0;
@@ -1224,7 +1238,7 @@ button:focus-visible {
   gap: 8px;
   margin-top: 18px;
   padding: 14px 10px 10px;
-  background: linear-gradient(180deg, #fffaf0, #fbefd8);   /* 둥지 안 꿀빛 */
+  background: linear-gradient(180deg, var(--problem-milk), #fbefd8);
   border: 1px solid var(--problem-line);
   border-radius: 18px;
 }
@@ -1248,7 +1262,6 @@ button:focus-visible {
   overflow: visible;
 }
 
-/* 단계 사이 꺾쇠 › */
 .problem-grow-step + .problem-grow-step::before {
   content: '›';
   position: absolute;
@@ -1259,32 +1272,33 @@ button:focus-visible {
   line-height: 1;
 }
 
-/* 등급 그림 색: 여기만 바꾸면 세 그림 색이 같이 바뀜 */
+/* 등급 그림 색 */
 .problem-grow {
-  /* 둥지 색 (둥지는 <use>로 재사용해서 class 대신 변수로 칠함) */
-  --problem-svg-nest: #9c7149;         /* 둥지 덩어리 */
-  --problem-svg-nest-dark: #5e4129;    /* 둥지 안쪽 그늘 */
-  --problem-svg-twig-dark: #6b4a2f;    /* 진한 가지 */
-  --problem-svg-twig-mid: #b0835a;     /* 중간 가지 */
-  --problem-svg-twig-light: #d6b48c;   /* 밝은 가지 (마른 풀) */
-  --problem-svg-moss: #c9b98a;         /* 이끼 (꿀빛 톤에 맞춰 마른 이끼색) */
+  --problem-svg-nest: #9c7149;
+  --problem-svg-nest-dark: #5e4129;
+  --problem-svg-twig-dark: #6b4a2f;
+  --problem-svg-twig-mid: #b0835a;
+  --problem-svg-twig-light: #d6b48c;
+  --problem-svg-moss: #c9b98a;
 }
-.problem-svg-egg        { fill: #fdf8ef; stroke: #e6d9c3; stroke-width: 1; }   /* 알·알껍데기: 크림 */
-.problem-svg-shine      { fill: #ffffff; }   /* 반짝임 */
-.problem-svg-chick-wing { fill: #f6d77a; }   /* 아기새 날개: 연노랑 */
-.problem-svg-chick-beak { fill: #f2b046; }   /* 아기새 부리: 꿀색 */
-/* 어른새: 하늘빛 (배는 크림, 부리는 꿀색으로 섹션 톤과 이어지게) */
-.problem-svg-adult-body    { fill: #a6d4f0; }   /* 몸·머리 */
-.problem-svg-adult-dark    { fill: #5e9fcf; }   /* 머리 깃·꼬리 */
-.problem-svg-adult-primary { fill: #4a88bb; }   /* 날개 긴 깃 */
-.problem-svg-adult-covert  { fill: #d6ecfa; }   /* 날개 덮깃·먼 날개 */
-.problem-svg-adult-cream   { fill: #fffaf0; }   /* 배·얼굴 */
-.problem-svg-adult-beak    { fill: #e8a93f; }   /* 부리: 꿀색 */
-.problem-svg-blush      { fill: #ffb3a7; opacity: 0.6; }   /* 볼 터치 */
+.problem-svg-egg        { fill: #fdf8ef; stroke: #e6d9c3; stroke-width: 1; }
+.problem-svg-shine      { fill: var(--problem-card); }
+.problem-svg-chick-wing { fill: var(--problem-chick-wing); }
+.problem-svg-chick-beak { fill: var(--problem-chick-beak); }
+.problem-chick-stop-light { stop-color: var(--problem-chick-light); }
+.problem-chick-stop-mid   { stop-color: var(--problem-chick-mid); }
+.problem-chick-stop-deep  { stop-color: var(--problem-chick-deep); }
+.problem-svg-adult-body    { fill: var(--problem-bluebird-body); }
+.problem-svg-adult-dark    { fill: var(--problem-bluebird-mid); }
+.problem-svg-adult-primary { fill: var(--problem-bluebird-deep); }
+.problem-svg-adult-covert  { fill: var(--problem-bluebird-pale); }
+.problem-svg-adult-cream   { fill: var(--problem-milk); }
+.problem-svg-adult-beak    { fill: var(--problem-accent); }
+.problem-svg-blush      { fill: #ffb3a7; opacity: 0.6; }
 .problem-svg-eye        { fill: #1d1a1c; }
 .problem-svg-motion     { fill: none; stroke: rgba(43, 33, 26, 0.2); stroke-width: 2; stroke-linecap: round; }
 
-/* 마우스를 올리면: 세 그림이 차례로 통통 */
+/* 마우스를 올리면 통통 + 날갯짓 */
 .problem-feature:hover .problem-grow-step svg {
   animation: problem-hop 0.5s ease-out;
 }
@@ -1296,7 +1310,6 @@ button:focus-visible {
   40%      { translate: 0 -8px; }
 }
 
-/* 마우스를 올리면: 어른새 날갯짓 (날개 아래쪽 가운데를 축으로 위아래로 접었다 폈다) */
 .problem-grow-wing {
   transform-box: fill-box;
   transform-origin: 50% 100%;
@@ -1311,8 +1324,7 @@ button:focus-visible {
   to   { scale: 1 -0.6; }
 }
 
-/* ----- 덤 카드: 둥지 그릇처럼 아래쪽이 더 둥근 넓은 카드 + 옅은 지푸라기 사선 무늬 -----
-   (위쪽은 크림, 아래로 갈수록 짚색이 살짝 비치게) */
+/* ----- 덤 카드 (둘러보며 배우기) ----- */
 .problem-bonus {
   align-items: center;
   margin-top: 12px;
@@ -1325,13 +1337,11 @@ button:focus-visible {
   color: var(--problem-ink);
 }
 
-/* 덤 카드는 다른 카드보다 한 톤 연하게: 글자·아이콘을 부드럽게 눌러 줌 */
-.problem-bonus .problem-feature-tag  { color: #e3bd72; }
-.problem-bonus .problem-feature-name { color: #85776b; }
-.problem-bonus .problem-feature-desc { color: #a2958a; }
+.problem-bonus .problem-feature-tag  { color: #c99a3e; }
+.problem-bonus .problem-feature-name { color: #74675b; }
+.problem-bonus .problem-feature-desc { color: #8a7c70; }
 .problem-bonus .problem-feature-icon { opacity: 0.85; }
 
-/* 카드 오른쪽 위에 은은한 꿀빛 */
 .problem-bonus::before {
   content: '';
   position: absolute;
@@ -1346,19 +1356,16 @@ button:focus-visible {
   pointer-events: none;
 }
 
-/* 글자·아이콘이 꿀빛 위에 오도록 */
 .problem-bonus > * {
   position: relative;
 }
 
-/* 덤 카드 아이콘: 꿀색 입체 알 */
 .problem-bonus .problem-feature-icon {
   --problem-tint: #ffe7b3;
   --problem-tint-strong: var(--problem-accent);
 }
 
-/* ----- 스크롤하면 한 줄씩 떠오르기 (JS 없이 CSS 스크롤 애니메이션) -----
-   지원하지 않는 브라우저(일부 Safari 등)에서는 그냥 처음부터 보입니다. */
+/* ----- 스크롤하면 한 줄씩 떠오르기 ----- */
 @supports (animation-timeline: view()) {
   .problem-pair,
   .problem-bonus {
@@ -1379,7 +1386,7 @@ button:focus-visible {
   }
 }
 
-/* 움직임을 줄이도록 설정한 사람에게는 섹션 2 애니메이션을 끔 */
+/* 동작 줄이기 설정이면 애니메이션 끔 */
 @media (prefers-reduced-motion: reduce) {
   .problem-glow,
   .problem-cloud,
@@ -1391,25 +1398,28 @@ button:focus-visible {
   .problem-bonus:hover .problem-feature-icon,
   .problem-feature:hover .problem-grow-step svg,
   .problem-feature:hover .problem-grow-wing,
-  .problem-help-count.is-bump {
+  .problem-help-count.is-bump,
+  .problem-pain:hover .problem-face-sweat,
+  .problem-pain:hover .problem-face-question,
+  .problem-pain:hover .problem-face-dot {
     animation: none;
   }
   .problem-float {
-    opacity: 1;   /* 움직이지 않고 그 자리에 보이기만 */
+    opacity: 1;
   }
 }
 
-/* 태블릿 너비: 화살표 칸을 좁힘 */
+/* 태블릿 */
 @media (max-width: 1024px) {
   .problem-pair {
     grid-template-columns: 1fr 48px 1.25fr;
   }
   .problem-pain-hint {
-    display: none;   /* 말풍선 폭이 좁아서 숨김 */
+    display: none;
   }
 }
 
-/* 휴대폰 너비: 위에서 아래로 쌓고 화살표는 아래를 가리킴 */
+/* 휴대폰 */
 @media (max-width: 768px) {
   .problem {
     margin: 0 8px;
@@ -1433,18 +1443,17 @@ button:focus-visible {
   .problem-pain {
     font-size: 15px;
   }
-  /* 휴대폰: "해결 보기"를 고민 글 아래 줄로 내려 글이 좁아지지 않게 */
   .problem-pain {
     flex-wrap: wrap;
     row-gap: 8px;
   }
   .problem-pain-text {
-    flex: 1 1 calc(100% - 64px);   /* 얼굴(44px) + 간격(14px) 옆에 한 줄로 */
+    flex: 1 1 calc(100% - 64px);
     min-width: 0;
   }
   .problem-pain-hint {
     display: inline-block;
-    margin-left: 58px;   /* 얼굴 너비 + 간격만큼 들여서 글과 줄 맞춤 */
+    margin-left: 58px;
   }
   .problem-pain-hint::after {
     content: ' ↓';
@@ -1479,7 +1488,7 @@ button:focus-visible {
     gap: 14px;
   }
   .problem-bonus {
-    padding-bottom: 28px;   /* 아래쪽 둥근 모서리에 글이 붙지 않게 */
+    padding-bottom: 28px;
     border-radius: 24px 24px 44px 44px;
   }
   .problem-glow {
@@ -1489,7 +1498,7 @@ button:focus-visible {
     width: 140px;
   }
   .problem-cloud--2 {
-    display: none;   /* 아래 여백이 좁아 카드와 겹쳐서 숨김 */
+    display: none;
   }
 }
 

@@ -125,34 +125,27 @@ render();
 
 /* =========================================================
    ===== 섹션 2. 문제·해결 (주요 기능) | 담당: 김승주 =====
-   - 섹션 3 코드와 이름이 겹치지 않도록 변수·함수 이름은 problem으로 시작합니다.
-   - 섹션은 기존 id(#problem)로 찾고, 그 안의 요소는 data- 속성으로 찾습니다.
-     (CSS용 class 이름이 바뀌어도 JS는 깨지지 않게)
+   - 이름은 problem으로 시작, 요소는 data- 속성으로 찾음
    ========================================================= */
 
 
-// 2-1. 섹션 2 영역과 기능을 붙일 요소를 찾아 둔다
+// 2-1. 요소 찾기
 const problemSection = document.querySelector('#problem');
 const problemLinkButtons = problemSection.querySelectorAll('[data-problem-link]');
-const problemTiltCards = problemSection.querySelectorAll('[data-problem-tilt]'); // 기울기는 덤 카드(둘러보며 배우기)에만
+const problemTiltCards = problemSection.querySelectorAll('[data-problem-tilt]');
 
 
-// 2-2. 고민 말풍선 → 해결 카드 연결하기
-//      말풍선을 누르면 같은 줄(li)에 .is-linked를 잠깐 붙인다
-//      - CSS가 이 class를 보고 화살표를 채우고 해결 카드를 빛나게 한다
-//        (마우스를 올렸을 때는 CSS :has()만으로 같은 효과가 나고, 누르기는 휴대폰·키보드용)
-//      - 휴대폰처럼 카드가 아래에 있으면 해결 카드가 보이도록 살짝 스크롤한다
+// 2-2. 고민 말풍선 → 해결 카드 연결
 const PROBLEM_LINK_TIME = 1800; // 빛나는 시간(ms)
 
 problemLinkButtons.forEach(function (button) {
   const pair = button.closest('[data-problem-pair]');
-  const card = pair.querySelector('[data-problem-card]'); // 같은 줄의 해결 카드
+  const card = pair.querySelector('[data-problem-card]');
   let timer = null;
 
   button.addEventListener('click', function () {
-    // 연달아 눌러도 처음부터 다시 빛나도록: 떼고 → 화면에 반영 → 다시 붙이기
     pair.classList.remove('is-linked');
-    void pair.offsetWidth; // 브라우저가 지금 상태를 한 번 그리게 하는 요령
+    void pair.offsetWidth;
     pair.classList.add('is-linked');
 
     clearTimeout(timer);
@@ -166,19 +159,14 @@ problemLinkButtons.forEach(function (button) {
 });
 
 
-// 2-3. 스크롤할수록 아침 → 낮 → 하늘 (날아오르는 연출)
-//      섹션 2가 화면을 지나가는 정도를 0~1로 계산해 CSS 변수 --problem-progress로 넘긴다
-//      - 0: 섹션 윗부분이 화면 맨 위에 닿기 전까지 (아침)
-//      - 1: 섹션 아랫부분이 화면 맨 아래에 닿았을 때 (하늘)
-//      - 스크롤마다 바로 계산하지 않고 화면을 그릴 때 한 번만 계산 (requestAnimationFrame)
+// 2-3. 스크롤할수록 아침 → 낮 → 하늘 (진행도 0~1을 CSS로 넘김)
 let problemSkyTicking = false;
 
 function updateProblemSky() {
   const rect = problemSection.getBoundingClientRect();
-  // 섹션을 끝까지 보려면 스크롤해야 하는 거리 (섹션이 화면보다 작으면 최소 1px)
   const distance = Math.max(rect.height - window.innerHeight, 1);
   let progress = -rect.top / distance;
-  progress = Math.min(Math.max(progress, 0), 1); // 0보다 작으면 0, 1보다 크면 1
+  progress = Math.min(Math.max(progress, 0), 1);
 
   problemSection.style.setProperty('--problem-progress', progress.toFixed(3));
   problemSkyTicking = false;
@@ -193,13 +181,11 @@ function requestProblemSky() {
 
 window.addEventListener('scroll', requestProblemSky, { passive: true });
 window.addEventListener('resize', requestProblemSky);
-updateProblemSky(); // 처음 열었을 때 한 번
+updateProblemSky();
 
 
-// 2-4. 마우스를 따라 기울어지는 카드 (입체 효과)
-//      마우스 위치를 카드 안에서 0~1 비율로 계산해 기울기와 조명 위치를 CSS 변수로 넘긴다
-//      - 마우스가 없는 기기(휴대폰)나 '동작 줄이기' 설정이면 실행하지 않는다
-const PROBLEM_MAX_TILT = 6; // 최대 기울기(도). 숫자를 키우면 더 많이 기울어짐
+// 2-4. 덤 카드 기울이기 (마우스가 있는 기기에서만)
+const PROBLEM_MAX_TILT = 6; // 최대 기울기(도)
 
 const problemCanTilt =
   window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
@@ -209,10 +195,9 @@ if (problemCanTilt) {
   problemTiltCards.forEach(function (card) {
     card.addEventListener('mousemove', function (event) {
       const rect = card.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;  // 왼쪽 끝 0 ~ 오른쪽 끝 1
-      const y = (event.clientY - rect.top) / rect.height;  // 위쪽 끝 0 ~ 아래쪽 끝 1
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
 
-      // 가운데(0.5)를 기준으로 마우스 쪽이 내려가듯 기울인다
       card.style.setProperty('--problem-tilt-x', ((0.5 - y) * PROBLEM_MAX_TILT * 2) + 'deg');
       card.style.setProperty('--problem-tilt-y', ((x - 0.5) * PROBLEM_MAX_TILT * 2) + 'deg');
       card.style.setProperty('--problem-glare-x', (x * 100) + '%');
@@ -220,7 +205,6 @@ if (problemCanTilt) {
       card.classList.add('is-tilting');
     });
 
-    // 마우스가 나가면 원래대로 (CSS 전환으로 부드럽게 돌아옴)
     card.addEventListener('mouseleave', function () {
       card.classList.remove('is-tilting');
       card.style.removeProperty('--problem-tilt-x');
@@ -230,10 +214,7 @@ if (problemCanTilt) {
 }
 
 
-// 2-5. 깃털 반응 체험: [도움 됐어요] 누르면 숫자 +1, 깃털이 팔랑팔랑 떨어짐
-//      - 다시 누르면 취소(숫자 -1). 저장하지 않아서 새로고침하면 처음 숫자로 돌아감
-//      - 깃털은 <template id="problemFeather">를 복사해서 버튼 위치에 붙이고, 애니메이션이 끝나면 지운다
-//      - '동작 줄이기' 설정이면 깃털 없이 숫자만 바뀜
+// 2-5. 깃털 반응 체험: [도움돼요] 누르면 숫자 +1, 깃털이 떨어짐 (다시 누르면 취소)
 const problemHelpArea = problemSection.querySelector('[data-problem-help-area]');
 const problemHelpButton = problemSection.querySelector('[data-problem-help]');
 const problemHelpCount = problemSection.querySelector('[data-problem-help-count]');
@@ -241,7 +222,6 @@ const problemFeatherTemplate = document.querySelector('#problemFeather');
 const PROBLEM_FEATHER_COUNT = 6; // 한 번에 떨어지는 깃털 수
 
 function dropProblemFeathers() {
-  // 버튼 가운데에서 깃털이 시작되도록 위치 계산 (problemHelpArea 기준)
   const startX = problemHelpButton.offsetLeft + problemHelpButton.offsetWidth / 2;
   const startY = problemHelpButton.offsetTop;
 
@@ -251,12 +231,11 @@ function dropProblemFeathers() {
 
     feather.style.left = startX + 'px';
     feather.style.top = startY + 'px';
-    feather.style.setProperty('--problem-dx', random(-70, 70) + 'px');     // 옆으로 흔들리는 거리
-    feather.style.setProperty('--problem-fall', random(60, 120) + 'px');   // 떨어지는 깊이
-    feather.style.setProperty('--problem-rot', random(-200, 200) + 'deg'); // 도는 각도
-    feather.style.animationDelay = (i * 70) + 'ms';                        // 하나씩 차례로
+    feather.style.setProperty('--problem-dx', random(-70, 70) + 'px');
+    feather.style.setProperty('--problem-fall', random(60, 120) + 'px');
+    feather.style.setProperty('--problem-rot', random(-200, 200) + 'deg');
+    feather.style.animationDelay = (i * 70) + 'ms';
 
-    // 애니메이션이 끝나면 화면에서 지운다
     feather.addEventListener('animationend', function () {
       feather.remove();
     });
@@ -268,16 +247,13 @@ problemHelpButton.addEventListener('click', function () {
   const isPressed = problemHelpButton.getAttribute('aria-pressed') === 'true';
   const count = Number(problemHelpCount.textContent);
 
-  // 눌린 상태를 반대로 바꾸고 숫자를 +1 / -1
   problemHelpButton.setAttribute('aria-pressed', String(!isPressed));
   problemHelpCount.textContent = isPressed ? count - 1 : count + 1;
 
-  // 숫자가 바뀔 때 톡 튀는 효과 (떼고 → 다시 붙여야 매번 처음부터 재생됨)
   problemHelpCount.classList.remove('is-bump');
   void problemHelpCount.offsetWidth;
   problemHelpCount.classList.add('is-bump');
 
-  // 새로 눌렀을 때만 깃털 (취소할 때는 안 떨어짐)
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!isPressed && !reduceMotion) {
     dropProblemFeathers();

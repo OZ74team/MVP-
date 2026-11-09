@@ -687,3 +687,45 @@ renderMvps();
     updateHeroScroll();
   }
 })();
+
+
+/* ===== 전체 배경: 아침 → 낮 → 하늘 → 노을 | 담당: 김승주 (브랜치 실험) =====
+   스크롤 위치로 하늘 진행도를 계산해서 .page-sky와 머리말에 CSS 변수로 넣습니다.
+   (값은 이 두 요소에만 넣어서 가볍게) */
+(function () {
+  const sky = document.querySelector('[data-page-sky]');
+  const header = document.querySelector('.site-header');   // 팀장 머리말: HTML은 그대로 두려고 class로 찾음
+  const hero = document.querySelector('#hero');
+  const problem = document.querySelector('#problem');
+  const submit = document.querySelector('#submit');
+  if (!sky || !header || !hero || !problem || !submit) return;
+
+  const clamp = function (v) { return Math.min(Math.max(v, 0), 1); };
+  let ticking = false;
+
+  function update() {
+    const y = scrollY;
+    const heroH = hero.offsetHeight;
+    const skyAt = problem.offsetTop + problem.offsetHeight - innerHeight * 0.5;   // 섹션 2 끝이 화면 가운데
+    const duskFrom = submit.offsetTop - innerHeight;                              // 섹션 4가 화면에 들어올 때
+    const end = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+
+    const a = clamp(y / heroH);                                                       // 아침 → 낮
+    const b = clamp((y - heroH * 0.5) / Math.max(skyAt - heroH * 0.5, 1));            // 낮 → 하늘
+    const c = clamp((y - duskFrom) / Math.max(end - duskFrom, 1));                    // 하늘 → 노을
+
+    [sky, header].forEach(function (el) {
+      el.style.setProperty('--page-a', a.toFixed(3));
+      el.style.setProperty('--page-b', b.toFixed(3));
+      el.style.setProperty('--page-c', c.toFixed(3));
+    });
+    header.style.setProperty('--page-head', clamp(y / 120).toFixed(3));        // 머리말 배경
+    ticking = false;
+  }
+
+  addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();

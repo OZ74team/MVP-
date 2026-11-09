@@ -161,32 +161,7 @@ problemLinkButtons.forEach(function (button) {
 });
 
 
-// 2-3. 스크롤할수록 아침 → 낮 → 하늘 (진행도 0~1을 CSS로 넘김)
-let problemSkyTicking = false;
-
-function updateProblemSky() {
-  const rect = problemSection.getBoundingClientRect();
-  const distance = Math.max(rect.height - window.innerHeight, 1);
-  let progress = -rect.top / distance;
-  progress = Math.min(Math.max(progress, 0), 1);
-
-  problemSection.style.setProperty('--problem-progress', progress.toFixed(3));
-  problemSkyTicking = false;
-}
-
-function requestProblemSky() {
-  if (!problemSkyTicking) {
-    problemSkyTicking = true;
-    requestAnimationFrame(updateProblemSky);
-  }
-}
-
-window.addEventListener('scroll', requestProblemSky, { passive: true });
-window.addEventListener('resize', requestProblemSky);
-updateProblemSky();
-
-
-// 2-4. 덤 카드 기울이기 (마우스가 있는 기기에서만)
+// 2-3. 덤 카드 기울이기 (마우스가 있는 기기에서만)
 const PROBLEM_MAX_TILT = 6; // 최대 기울기(도)
 
 const problemCanTilt =
@@ -216,7 +191,7 @@ if (problemCanTilt) {
 }
 
 
-// 2-5. 깃털 반응 체험: [도움돼요] 누르면 숫자 +1, 깃털이 떨어짐 (다시 누르면 취소)
+// 2-4. 깃털 반응 체험: [도움돼요] 누르면 숫자 +1, 깃털이 떨어짐 (다시 누르면 취소)
 const problemHelpArea = problemSection.querySelector('[data-problem-help-area]');
 const problemHelpButton = problemSection.querySelector('[data-problem-help]');
 const problemHelpCount = problemSection.querySelector('[data-problem-help-count]');
@@ -686,4 +661,46 @@ renderMvps();
     }, { passive: true });
     updateHeroScroll();
   }
+})();
+
+
+/* ===== 전체 배경: 아침 → 낮 → 하늘 → 노을 | 담당: 김승주 (브랜치 실험) =====
+   스크롤 위치로 하늘 진행도를 계산해서 .page-sky와 머리말에 CSS 변수로 넣습니다.
+   (값은 이 두 요소에만 넣어서 가볍게) */
+(function () {
+  const sky = document.querySelector('[data-page-sky]');
+  const header = document.querySelector('.site-header');   // 팀장 머리말: HTML은 그대로 두려고 class로 찾음
+  const hero = document.querySelector('#hero');
+  const problem = document.querySelector('#problem');
+  const submit = document.querySelector('#submit');
+  if (!sky || !header || !hero || !problem || !submit) return;
+
+  const clamp = function (v) { return Math.min(Math.max(v, 0), 1); };
+  let ticking = false;
+
+  function update() {
+    const y = scrollY;
+    const heroH = hero.offsetHeight;
+    const skyAt = problem.offsetTop + problem.offsetHeight - innerHeight * 0.5;   // 섹션 2 끝이 화면 가운데
+    const duskFrom = submit.offsetTop - innerHeight;                              // 섹션 4가 화면에 들어올 때
+    const end = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+
+    const a = clamp(y / heroH);                                                       // 아침 → 낮
+    const b = clamp((y - heroH * 0.5) / Math.max(skyAt - heroH * 0.5, 1));            // 낮 → 하늘
+    const c = clamp((y - duskFrom) / Math.max(end - duskFrom, 1));                    // 하늘 → 노을
+
+    [sky, header].forEach(function (el) {
+      el.style.setProperty('--page-a', a.toFixed(3));
+      el.style.setProperty('--page-b', b.toFixed(3));
+      el.style.setProperty('--page-c', c.toFixed(3));
+    });
+    header.style.setProperty('--page-head', clamp(y / 120).toFixed(3));        // 머리말 배경
+    ticking = false;
+  }
+
+  addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
 })();

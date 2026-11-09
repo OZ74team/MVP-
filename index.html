@@ -276,43 +276,6 @@
 
     <!-- ===== 섹션 2. 문제·해결 (주요 기능) | 담당: 김승주 ===== -->
     <section id="problem" class="problem">
-      <!-- 배경 장식: 햇빛, 하늘빛 -->
-      <span class="problem-glow problem-glow--sun" aria-hidden="true"></span>
-      <span class="problem-glow problem-glow--sky" aria-hidden="true"></span>
-      <!-- 구름 -->
-      <svg class="problem-cloud problem-cloud--1" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="problemCloudFluff" x="-20%" y="-40%" width="140%" height="180%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" seed="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
-            <feGaussianBlur stdDeviation="1.4"/>
-          </filter>
-          <linearGradient id="problemCloudShade" gradientUnits="userSpaceOnUse" x1="0" y1="18" x2="0" y2="104">
-            <stop class="problem-cloud-stop-top" offset="0"/>
-            <stop class="problem-cloud-stop-mid" offset="0.55"/>
-            <stop class="problem-cloud-stop-bottom" offset="1"/>
-          </linearGradient>
-        </defs>
-        <g filter="url(#problemCloudFluff)" fill="url(#problemCloudShade)">
-          <ellipse cx="112" cy="86" rx="88" ry="18"/>
-          <circle cx="58" cy="72" r="28"/>
-          <circle cx="96" cy="54" r="38"/>
-          <circle cx="142" cy="60" r="32"/>
-          <circle cx="176" cy="76" r="22"/>
-          <circle cx="36" cy="84" r="16"/>
-        </g>
-      </svg>
-      <svg class="problem-cloud problem-cloud--2" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
-        <g filter="url(#problemCloudFluff)" fill="url(#problemCloudShade)">
-          <ellipse cx="112" cy="86" rx="88" ry="18"/>
-          <circle cx="58" cy="72" r="28"/>
-          <circle cx="96" cy="54" r="38"/>
-          <circle cx="142" cy="60" r="32"/>
-          <circle cx="176" cy="76" r="22"/>
-          <circle cx="36" cy="84" r="16"/>
-        </g>
-      </svg>
-
       <div class="section-inner">
         <!-- 머리글 -->
         <div class="problem-head">

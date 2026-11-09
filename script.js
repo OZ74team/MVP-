@@ -161,32 +161,7 @@ problemLinkButtons.forEach(function (button) {
 });
 
 
-// 2-3. 스크롤할수록 아침 → 낮 → 하늘 (진행도 0~1을 CSS로 넘김)
-let problemSkyTicking = false;
-
-function updateProblemSky() {
-  const rect = problemSection.getBoundingClientRect();
-  const distance = Math.max(rect.height - window.innerHeight, 1);
-  let progress = -rect.top / distance;
-  progress = Math.min(Math.max(progress, 0), 1);
-
-  problemSection.style.setProperty('--problem-progress', progress.toFixed(3));
-  problemSkyTicking = false;
-}
-
-function requestProblemSky() {
-  if (!problemSkyTicking) {
-    problemSkyTicking = true;
-    requestAnimationFrame(updateProblemSky);
-  }
-}
-
-window.addEventListener('scroll', requestProblemSky, { passive: true });
-window.addEventListener('resize', requestProblemSky);
-updateProblemSky();
-
-
-// 2-4. 덤 카드 기울이기 (마우스가 있는 기기에서만)
+// 2-3. 덤 카드 기울이기 (마우스가 있는 기기에서만)
 const PROBLEM_MAX_TILT = 6; // 최대 기울기(도)
 
 const problemCanTilt =
@@ -216,7 +191,7 @@ if (problemCanTilt) {
 }
 
 
-// 2-5. 깃털 반응 체험: [도움돼요] 누르면 숫자 +1, 깃털이 떨어짐 (다시 누르면 취소)
+// 2-4. 깃털 반응 체험: [도움돼요] 누르면 숫자 +1, 깃털이 떨어짐 (다시 누르면 취소)
 const problemHelpArea = problemSection.querySelector('[data-problem-help-area]');
 const problemHelpButton = problemSection.querySelector('[data-problem-help]');
 const problemHelpCount = problemSection.querySelector('[data-problem-help-count]');

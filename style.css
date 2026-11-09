@@ -1412,9 +1412,6 @@ button:focus-visible {
 /* 섹션 2 전용 색 변수 */
 .problem {
   --problem-paper: #fcf7ee;
-  --problem-dawn: #fbf1dd;
-  --problem-sky-end: #d6eaf8;
-  --problem-progress: 0.5;
   --problem-card: #ffffff;
   --problem-ink: #2b211a;
   --problem-sub: #7a6a5d;
@@ -1436,9 +1433,6 @@ button:focus-visible {
   --problem-chick-deep: #f9dc8a;
   --problem-chick-wing: #f6d77a;
   --problem-chick-beak: #f2b046;
-  --problem-cloud-top: #ffffff;    /* 구름 (위 → 아래로 푸르스름하게) */
-  --problem-cloud-mid: #fbfdff;
-  --problem-cloud-bottom: #d3e3f0;
   --problem-shadow:
     0 1px 1px rgba(43, 33, 26, 0.04),
     0 6px 16px -4px rgba(43, 33, 26, 0.08),
@@ -1452,21 +1446,21 @@ button:focus-visible {
   position: relative;
   overflow: hidden;
   overflow: clip;     
-  margin: 0 12px;
+  margin: 0 26px;                                   /* 양옆으로 하늘이 보여서 떠 있는 느낌 */
   border-radius: 48px;
-  background-color: var(--problem-paper);
+  /* 배경은 거의 투명(유리막 10%) → 뒤의 페이지 하늘이 비침, 가장자리만 유리판처럼 입체적으로 */
+  background-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.95),        /* 위쪽 하이라이트 */
+    inset 2px 0 0 rgba(255, 255, 255, 0.6),         /* 왼쪽 하이라이트 */
+    inset 0 -3px 0 rgba(43, 33, 26, 0.06),          /* 아래쪽 안쪽 그늘 */
+    inset -2px 0 3px rgba(43, 33, 26, 0.05),        /* 오른쪽 안쪽 그늘 */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.38),      /* 안쪽 얇은 빛 테 */
+    0 0 0 1px rgba(43, 33, 26, 0.11),               /* 바깥 윤곽 */
+    6px 10px 28px rgba(43, 33, 26, 0.06),           /* 둘레 그림자 (왼쪽 위는 연하게) */
+    0 2px 4px rgba(43, 33, 26, 0.05),               /* 가까운 아래 그림자 */
+    0 28px 56px -24px rgba(43, 33, 26, 0.24);       /* 아래로 떨어지는 그림자 */
   color: var(--problem-ink);
-}
-
-/* 스크롤할수록 아침 → 낮 → 하늘 */
-@supports (background-color: color-mix(in oklab, red, blue)) {
-  .problem {
-    background-color: color-mix(
-      in oklab,
-      color-mix(in oklab, var(--problem-dawn), var(--problem-paper) calc(min(var(--problem-progress), 0.5) * 200%)),
-      var(--problem-sky-end) calc(max(var(--problem-progress) - 0.5, 0) * 200%)
-    );
-  }
 }
 
 /* 종이 질감 */
@@ -1482,76 +1476,6 @@ button:focus-visible {
 .problem .section-inner {
   position: relative;
   z-index: 1;
-}
-
-/* ----- 배경 장식 ----- */
-.problem-glow {
-  position: absolute;
-  width: 520px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.55;
-  animation: problem-drift 16s ease-in-out infinite;
-}
-
-/* 햇빛 */
-.problem-glow--sun {
-  top: -180px;
-  left: -160px;
-  background: radial-gradient(circle, var(--problem-sun-light) 0%, var(--problem-sun) 45%, rgba(255, 241, 196, 0) 72%);
-  filter: blur(40px);
-  opacity: calc(0.95 - var(--problem-progress) * 0.6);
-}
-
-.problem-glow--sky {
-  bottom: -200px;
-  right: -160px;
-  background-color: var(--problem-cream);
-  animation-delay: -8s;
-}
-
-@supports (background-color: color-mix(in oklab, red, blue)) {
-  .problem-glow--sky {
-    background-color: color-mix(in oklab, var(--problem-cream), #b9dcf4 calc(var(--problem-progress) * 100%));
-  }
-}
-
-/* 구름 */
-.problem-cloud-stop-top    { stop-color: var(--problem-cloud-top); }
-.problem-cloud-stop-mid    { stop-color: var(--problem-cloud-mid); }
-.problem-cloud-stop-bottom { stop-color: var(--problem-cloud-bottom); }
-
-.problem-cloud {
-  position: absolute;
-  width: 220px;
-  height: auto;
-  overflow: visible;
-  opacity: clamp(0, (var(--problem-progress) - 0.55) * 2.5, 0.95);
-  filter: drop-shadow(0 10px 14px rgba(80, 130, 170, 0.14));
-  animation: problem-cloud 22s ease-in-out infinite alternate;
-}
-
-.problem-cloud--1 {
-  bottom: 280px;
-  left: 2%;
-}
-
-.problem-cloud--2 {
-  bottom: 20px;
-  right: 8%;
-  scale: 0.7;
-  animation-delay: -11s;
-}
-
-@keyframes problem-cloud {
-  from { translate: -20px 0; }
-  to   { translate: 30px 0; }
-}
-
-@keyframes problem-drift {
-  0%, 100% { translate: 0 0; }
-  50%      { translate: 60px 40px; }
 }
 
 /* ----- 머리글 ----- */
@@ -2249,8 +2173,6 @@ button:focus-visible {
 
 /* 동작 줄이기 설정이면 애니메이션 끔 */
 @media (prefers-reduced-motion: reduce) {
-  .problem-glow,
-  .problem-cloud,
   .problem-pair,
   .problem-bonus,
   .problem-float,
@@ -2351,15 +2273,6 @@ button:focus-visible {
   .problem-bonus {
     padding-bottom: 28px;
     border-radius: 24px 24px 44px 44px;
-  }
-  .problem-glow {
-    width: 300px;
-  }
-  .problem-cloud {
-    width: 140px;
-  }
-  .problem-cloud--2 {
-    display: none;
   }
 }
 
@@ -2756,25 +2669,6 @@ button:focus-visible {
 .page-sky-cloud--2 { top: 52%; right: 6%; width: 200px; animation-delay: -13s; }
 @keyframes page-cloud { from { translate: -24px 0; } to { translate: 36px 0; } }
 @media (prefers-reduced-motion: reduce) { .page-sky-cloud { animation: none; } }
-
-/* 섹션 2: 자체 아침 → 하늘 효과는 끄고 페이지 하늘을 그대로 비춤
-   카드 안은 거의 투명(유리막 10%), 가장자리만 유리판처럼 입체적으로 */
-.problem {
-  margin: 0 26px;                                   /* 양옆으로 하늘이 보여서 떠 있는 느낌 */
-  background-color: rgba(255, 255, 255, 0.10);
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.95),        /* 위쪽 하이라이트 */
-    inset 2px 0 0 rgba(255, 255, 255, 0.6),         /* 왼쪽 하이라이트 */
-    inset 0 -3px 0 rgba(43, 33, 26, 0.06),          /* 아래쪽 안쪽 그늘 */
-    inset -2px 0 3px rgba(43, 33, 26, 0.05),        /* 오른쪽 안쪽 그늘 */
-    inset 0 0 0 1px rgba(255, 255, 255, 0.38),      /* 안쪽 얇은 빛 테 */
-    0 0 0 1px rgba(43, 33, 26, 0.11),               /* 바깥 윤곽 */
-    6px 10px 28px rgba(43, 33, 26, 0.06),           /* 둘레 그림자 (왼쪽 위는 연하게) */
-    0 2px 4px rgba(43, 33, 26, 0.05),               /* 가까운 아래 그림자 */
-    0 28px 56px -24px rgba(43, 33, 26, 0.24);       /* 아래로 떨어지는 그림자 */
-}
-.problem-glow, .problem-cloud { display: none; }
-@media (max-width: 768px) { .problem { margin: 0 8px; } }
 
 /* [다른 섹션 덮어쓰기] 페이지 하늘이 보이도록 배경만 바꿈 */
 /* 머리말(담당: 김민석): 맨 위에서는 투명, 내려가면 하늘색을 따라 배경이 나타남 (아래 선은 그대로) */
